@@ -1,0 +1,86 @@
+[
+  { "_type": "faction", "_id": "fac_village", "name": "Conseil de Bourbe-Claire", "description": "Les dirigeants du village isolé." },
+  { "_type": "faction", "_id": "fac_hag", "name": "Coven de Mère Verrues", "description": "Les serviteurs de la sorcière du marais." },
+
+  { "_type": "item", "_id": "item_potion_soin", "name": "Potion de Soin", "type": "consumable", "rarity": "Commun", "isMagic": true, "value": "50 po" },
+  { "_type": "item", "_id": "item_epee_courte", "name": "Épée Courte", "type": "weapon", "rarity": "Commun", "isMagic": false, "value": "10 po" },
+  { "_type": "item", "_id": "item_baton_adder", "name": "Bâton de l'Adder", "type": "weapon", "rarity": "Peu Commun", "isMagic": true, "attunement": true, "value": "500 po" },
+
+  { "_type": "spell", "_id": "spell_detect_magic", "name": "Détection de la Magie", "level": 1, "school": "Divination", "castingTime": "1 action", "range": "Personnel", "duration": "10 min" },
+  { "_type": "spell", "_id": "spell_firebolt", "name": "Trait de Feu", "level": 0, "school": "Évocation", "castingTime": "1 action", "range": "36 m", "duration": "Instantanée" },
+
+  { 
+    "_type": "npc", 
+    "_id": "npc_elara", 
+    "name": "Maire Elara", 
+    "role": "Maire & Ancienne Combattante", 
+    "personality": "Autoritaire mais anxieuse. Culpabilise de ne pas pouvoir agir.", 
+    "history": "Ancienne mercenaire, elle a pris sa retraite ici pour protéger sa fille adoptive.",
+    "faction": { "_type": "reference", "_ref": "fac_village" },
+    "combatType": "template",
+    "monsterTemplate": { "_type": "reference", "_ref": "monstre_garde" } 
+  },
+  { 
+    "_type": "npc", 
+    "_id": "npc_glog", 
+    "name": "Glog le Traître", 
+    "role": "Guide Gobelin", 
+    "personality": "Lâche, kleptomane, mais utile.", 
+    "faction": { "_type": "reference", "_ref": "fac_hag" },
+    "combatType": "template",
+    "monsterTemplate": { "_type": "reference", "_ref": "monstre_gobelin" },
+    "inventory": [{ "_type": "reference", "_ref": "item_potion_soin" }]
+  },
+
+  {
+    "_type": "location",
+    "_id": "loc_village",
+    "name": "Bourbe-Claire",
+    "npcs": [{ "_type": "reference", "_ref": "npc_elara" }]
+  },
+  {
+    "_type": "location",
+    "_id": "loc_marais",
+    "name": "Le Marais Brumeux",
+    "monsters": [
+        { "_type": "reference", "_ref": "monstre_zombie" },
+        { "_type": "reference", "_ref": "monstre_squelette" }
+    ],
+    "npcs": [{ "_type": "reference", "_ref": "npc_glog" }]
+  },
+  {
+    "_type": "location",
+    "_id": "loc_tour",
+    "name": "Tour Engloutie",
+    "monsters": [
+        { "_type": "reference", "_ref": "monstre_spectre" }
+    ]
+  },
+
+  {
+    "_type": "campaign",
+    "title": "Le Marais des Murmures",
+    "level": "3",
+    "synopsis": "Un village est frappé par une étrange maladie du sommeil. Les aventuriers doivent s'enfoncer dans le marais pour trouver la tour de la sorcière.",
+    "acts": [
+      {
+        "_key": "act1",
+        "title": "Acte 1 : L'Enquête",
+        "summary": "Arrivée au village, rencontre avec la maire et découverte des premiers indices.",
+        "locations": [{ "_type": "reference", "_ref": "loc_village" }]
+      },
+      {
+        "_key": "act2",
+        "title": "Acte 2 : La Traversée",
+        "summary": "Voyage périlleux dans le marais guidé par un gobelin peu fiable.",
+        "locations": [{ "_type": "reference", "_ref": "loc_marais" }]
+      },
+      {
+        "_key": "act3",
+        "title": "Acte 3 : La Confrontation",
+        "summary": "L'assaut de la tour et le combat contre Mère Verrues.",
+        "locations": [{ "_type": "reference", "_ref": "loc_tour" }]
+      }
+    ]
+  }
+]
