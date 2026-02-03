@@ -3,17 +3,17 @@ export default {
   title: 'Joueurs (PJ)',
   type: 'document',
   fields: [
-    { name: 'name', title: 'Nom Perso', type: 'string' },
-    { name: 'playerName', title: 'Nom Joueur', type: 'string' },
+    { name: 'name', title: 'Nom du Personnage', type: 'string' },
+    { name: 'playerName', title: 'Nom du Joueur (IRL)', type: 'string' },
     { name: 'avatar', title: 'Avatar', type: 'image' },
+    
+    // Infos RP minimales
     { name: 'race', title: 'Race', type: 'string' },
-    { name: 'class', title: 'Classe', type: 'string' },
-    { name: 'level', title: 'Niveau', type: 'number' },
+    { name: 'class', title: 'Classe & Niveau', type: 'string', description: "Ex: Paladin 3" },
+
+    // Stats Vitales (Pour le Tracker)
     { name: 'hpMax', title: 'PV Max', type: 'number' },
-    { name: 'ac', title: 'CA', type: 'number' },
-    { name: 'initBonus', title: 'Init Bonus', type: 'number' },
-    { name: 'pp', title: 'Perception Passive', type: 'number' },
-    { name: 'spellSaveDC', title: 'DD Sort', type: 'number' },
-    { name: 'inventory', title: 'Inventaire', type: 'array', of: [{ type: 'reference', to: [{ type: 'item' }] }] }
+    { name: 'ac', title: 'Classe d\'Armure', type: 'number' },
+    { name: 'initBonus', title: 'Bonus Initiative', type: 'number' }
   ]
 }

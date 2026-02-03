@@ -8,7 +8,7 @@ import { StatusList } from "../../components/tracker/StatusIcon"
 import { HealthBar } from "../../components/tracker/HealthBar"
 import { useCombatTracker } from "../../hooks/useCombatTracker"
 import { Modal } from "../../components/ui/Modal"
-import { StatBlock } from "../../components/bestiary/StatBlock"
+import { StatBlock } from "../../components/ui/StatBlock"
 
 // Types locaux
 type Combatant = {
@@ -38,13 +38,27 @@ export default function TrackerPage() {
   const [selectedFighter, setSelectedFighter] = useState<any>(null) // Pour la modale
 
   const openFighterDetails = async (fighter: Combatant) => {
-    if (!fighter.sanityId) return; // Pas de fiche liée
+    if (!fighter.sanityId) return;
     
-    // On affiche un loader en attendant
     setSelectedFighter({ loading: true, name: fighter.name });
   
-    // On va chercher la fiche complète
-    const fullData = await client.fetch(`*[_id == $id][0]`, { id: fighter.sanityId });
+    // On demande EXPLICITEMENT de dérouler (expand) les références
+    const fullData = await client.fetch(`*[_id == $id][0]{
+      ..., // On prend tout les champs de base
+      
+      // Si c'est un joueur ou PNJ, on veut le détail de l'inventaire
+      inventory[]->{ name, type, isMagic, rarity },
+      
+      // Si c'est un joueur ou PNJ, on veut les sorts
+      spells[]->{ name, level, school },
+  
+      // Si c'est un PNJ avec template
+      monsterTemplate->{
+        ...,
+        stats
+      }
+    }`, { id: fighter.sanityId });
+  
     setSelectedFighter(fullData);
   }
 
@@ -71,46 +85,77 @@ export default function TrackerPage() {
     setTurnIndex(0) // Reset le tour au début après un tri
   }
 
-  const addCombatant = (template: any, type: 'monster' | 'player') => {
-    // Calcul du numéro (Gobelin 1, Gobelin 2...)
-    const count = combatants.filter(c => c.name.startsWith(template.name)).length
-    const name = count > 0 ? `${template.name} ${count + 1}` : template.name
+  const addCombatant = (template: any, type: 'monster' | 'player' | 'npc') => {
+    
+    // 1. EXTRACTION DES STATS
+    let hp = 10, maxHp = 10, ac = 10, initBonus = 0;
 
-    let hp = 10, ac = 10;
-
+    // --- CAS JOUEUR ---
     if (template._type === 'player') {
       hp = template.hpMax || 10;
+      maxHp = template.hpMax || 10;
       ac = template.ac || 10;
+      initBonus = template.initBonus || 0;
+    
+    // --- CAS MONSTRE ---
     } else if (template._type === 'monster') {
-      hp = parseInt(template.stats?.hp || "10");
+      // Parsing des PV (ex: "22 (5d8)" -> 22)
+      const parsedHp = parseInt(template.stats?.hp) || 10;
+      hp = parsedHp;
+      maxHp = parsedHp;
       ac = template.stats?.ac || 10;
+      // Bonus init monstre : souvent (Dex - 10) / 2
+      const dex = template.stats?.attributes?.dex || 10;
+      initBonus = Math.floor((dex - 10) / 2);
+    
+    // --- CAS PNJ ---
     } else if (template._type === 'npc') {
-      // PNJ : Soit stats custom, soit template monstre
-      if (template.customStats) {
-        hp = parseInt(template.customStats.hp || "10");
+      if (template.combatType === 'custom' && template.customStats) {
+        const parsedHp = parseInt(template.customStats.hp) || 10;
+        hp = parsedHp;
+        maxHp = parsedHp;
         ac = template.customStats.ac || 10;
-      } else if (template.monsterTemplate) {
-        hp = parseInt(template.monsterTemplate.stats?.hp || "10");
-        ac = template.monsterTemplate.stats?.ac || 10;
+        // Si attributs custom dispos pour init
+        const dex = template.customStats.attributes?.dex || 10;
+        initBonus = Math.floor((dex - 10) / 2);
+
+      } else if (template.combatType === 'template' && template.monsterTemplate) {
+        const mStats = template.monsterTemplate.stats;
+        const parsedHp = parseInt(mStats?.hp) || 10;
+        hp = parsedHp;
+        maxHp = parsedHp;
+        ac = mStats?.ac || 10;
+        const dex = mStats?.attributes?.dex || 10;
+        initBonus = Math.floor((dex - 10) / 2);
       }
     }
 
+    // 2. GESTION DU NOM (Doublons : Gobelin 1, Gobelin 2...)
+    const count = combatants.filter(c => c.name.startsWith(template.name)).length;
+    const name = count > 0 ? `${template.name} ${count + 1}` : template.name;
+
+    // 3. CRÉATION DE L'OBJET COMBATANT
     const newFighter: Combatant = {
       id: Math.random().toString(36).substr(2, 9),
       sanityId: template._id,
       name: name,
-      type: type,
+      type: type, // 'player', 'monster' ou 'npc'
+      // Faction par défaut : Joueurs = Amis, Autres = Ennemis
       faction: type === 'player' ? 'friendly' : 'hostile',
-      initiative: 0, // À lancer
-      hp: template.stats?.hp ? parseInt(template.stats.hp) : 10,
-      hpMax: template.stats?.hp ? parseInt(template.stats.hp) : 10,
-      ac: template.stats?.ac || 10,
+      // On lance le dé automatiquement pour gagner du temps (D20 + Bonus)
+      initiative: Math.floor(Math.random() * 20) + 1 + initBonus,
+      hp: hp,
+      hpMax: maxHp,
+      ac: ac,
       conditions: [],
       avatar: template.image
-    }
-    setCombatants([...combatants, newFighter])
-    setSearchQuery("") // Fermer la recherche
-  }
+    };
+
+    // 4. MISE À JOUR DE L'ÉTAT
+    setCombatants([...combatants, newFighter]);
+    setSearchQuery(""); // Fermer la recherche
+    setSearchResults([]); // Vider les résultats
+  };
 
   const updateCombatant = (id: string, updates: Partial<Combatant>) => {
     setCombatants(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c))
@@ -132,6 +177,10 @@ export default function TrackerPage() {
     }))
   }
 
+  const removeCombatant = (id: string) => {
+    setCombatants(prev => prev.filter(c => c.id !== id))
+  }
+
   // --- RECHERCHE SANITY ---
   useEffect(() => {
     if (searchQuery.length < 2) {
@@ -143,14 +192,25 @@ export default function TrackerPage() {
       // On cherche Monstres ET Joueurs
       const results = await client.fetch(`
         *[_type in ["monster", "player", "npc"] && name match $q + "*"][0...10]{
-          _id, _type, name, image,
-          // Monstres : stats dans un objet
-          stats { hp, ac }, 
-          // Joueurs : stats à la racine
-          hpMax, ac, 
-          // PNJ : Soit customStats (objet), soit lien vers monsterTemplate
-          customStats { hp, ac },
-          monsterTemplate->{ stats { hp, ac } }
+          _id, 
+          _type, 
+          name, 
+          image,
+          
+          // CAS MONSTRE
+          stats { hp, ac, initiative }, 
+          
+          // CAS JOUEUR
+          hpMax, 
+          ac, 
+          initBonus, // Important pour Thorin !
+          
+          // CAS PNJ (Le plus complexe)
+          combatType,
+          customStats { hp, ac, attributes },
+          monsterTemplate->{ 
+            stats { hp, ac, initiative } 
+          }
         }
       `, { q: searchQuery })
       setSearchResults(results)
@@ -268,6 +328,17 @@ export default function TrackerPage() {
                     {/* Input custom dmg pourrait aller ici */}
                   </div>
                 </div>
+
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation(); // Pour ne pas ouvrir la modale en cliquant ici
+                    if(confirm("Retirer du combat ?")) removeCombatant(c.id);
+                  }}
+                  className="ml-2 text-slate-600 hover:text-red-500 hover:bg-red-900/20 rounded-full w-6 h-6 flex items-center justify-center transition"
+                  title="Retirer du combat"
+                >
+                  ✖
+                </button>
 
               </div>
             </div>
