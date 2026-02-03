@@ -1,5 +1,6 @@
 import { client, urlFor } from "../../lib/sanity"
 import { Badge } from "../../components/ui/Badge"
+import Link from "next/link"
 
 async function getPlayers() {
   return await client.fetch(`*[_type == "player"] | order(name asc) {
@@ -27,6 +28,7 @@ export default async function PlayersPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {players.map((p: any) => (
+	<Link href={`/players/${p._id}`} key={p._id} className="block group h-full">
           <div key={p._id} className="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-xl relative group">
             
             {/* Bannière Classe */}
@@ -81,6 +83,7 @@ export default async function PlayersPage() {
             )}
 
           </div>
+	  </Link>
         ))}
       </div>
     </div>
