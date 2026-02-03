@@ -5,6 +5,9 @@ export default defineCliConfig({
     projectId: '5hbzc0ty',
     dataset: 'production'
   },
+
+  studioHost: 'appdnd-cms',
+
   deployment: {
     /**
      * Enable auto-updates for studios.
