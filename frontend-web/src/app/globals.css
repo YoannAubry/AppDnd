@@ -24,3 +24,11 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+html, body {
+  background-color: #020617; /* C'est le slate-950 */
+  color: #f1f5f9; /* slate-100 */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
