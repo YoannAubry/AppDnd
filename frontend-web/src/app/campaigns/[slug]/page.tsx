@@ -2,6 +2,7 @@ import { client, urlFor } from "../../../lib/sanity"
 import Link from "next/link"
 import { ActView } from "../../../components/campaign/ActView" 
 import { AdminToolbar } from "../../../components/ui/adminToolbar"
+import { Campaign } from "@/types"
 
 
 // GROQ Query : On va chercher la campagne ET on "déroule" les références (Lieux -> PNJ -> Monstres)
@@ -29,7 +30,7 @@ async function getCampaign(slug: string) {
 
 export default async function CampaignDetailPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const campaign = await getCampaign(params.slug)
+  const campaign : Campaign= await getCampaign(params.slug)
 
   if (!campaign) return (
     <div className="p-20 text-center">

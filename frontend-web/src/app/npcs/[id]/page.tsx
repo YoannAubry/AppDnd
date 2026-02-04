@@ -2,6 +2,7 @@ import { client, urlFor } from "../../../lib/sanity"
 import Link from "next/link"
 import { Badge } from "../../../components/ui/Badge"
 import { AdminToolbar } from "../../../components/ui/adminToolbar"
+import { NPC } from "@/types"
 
 async function getNPC(id: string) {
   return await client.fetch(`*[_type == "npc" && _id == $id][0]{
@@ -16,7 +17,7 @@ async function getNPC(id: string) {
 
 export default async function NPCDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const npc = await getNPC(params.id)
+  const npc : NPC = await getNPC(params.id)
 
   if (!npc) return <div className="p-20 text-center">PNJ introuvable</div>
 

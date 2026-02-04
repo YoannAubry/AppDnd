@@ -4,8 +4,9 @@ import { updateMonsterAction } from "../../../actions/bestiary" // Remonte de [s
 import { DynamicList } from "../../../../components/ui/DynamicList"
 import { useState } from "react"
 import Link from "next/link"
+import { Monster } from "@/types"
 
-export default function EditMonsterForm({ monster }: { monster: any }) {
+export default function EditMonsterForm({ monster }: { monster: Monster }) {
   // Initialiser les états avec les données existantes
   const [traits, setTraits] = useState(monster.stats?.traits || [])
   const [actions, setActions] = useState(monster.stats?.actions || [])

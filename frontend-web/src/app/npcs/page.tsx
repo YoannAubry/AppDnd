@@ -1,3 +1,4 @@
+import { NPC } from "@/types"
 import { client, urlFor } from "../../lib/sanity"
 import Link from "next/link"
 
@@ -20,7 +21,7 @@ export default async function NPCsPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {npcs.map((npc: any) => (
+        {npcs.map((npc: NPC) => (
           <Link href={`/npcs/${npc._id}`} key={npc._id}>
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-4 hover:border-blue-500 transition cursor-pointer">
               <div className="w-16 h-16 rounded-full bg-slate-800 overflow-hidden border border-slate-700">

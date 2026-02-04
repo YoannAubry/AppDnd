@@ -1,3 +1,4 @@
+import { Player } from "@/types"
 import { client, urlFor } from "../../lib/sanity"
 import Link from "next/link"
 
@@ -15,7 +16,7 @@ export default async function PlayersPage() {
       <h1 className="text-4xl font-bold mb-8 text-blue-400">🛡️ La Compagnie</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {players.map((p: any) => (
+        {players.map((p: Player) => (
           <Link href={`/players/${p._id}`} key={p._id} className="block group h-full">
             <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg hover:border-blue-500 transition h-full flex items-center p-4 gap-4">
               

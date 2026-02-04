@@ -1,16 +1,32 @@
 "use server"
 
-import { writeClient } from "../../lib/sanityWrite"
+import { writeClient } from "@/lib/sanityWrite"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { getString } from "@/lib/actions-utils"
+
+function parseRefs(jsonString: string): any[] {
+  try {
+    if (!jsonString) return []
+    const ids = JSON.parse(jsonString)
+    if (!Array.isArray(ids)) return []
+    return ids.map((id: string) => ({
+      _key: id, // Important pour React et Sanity
+      _type: 'reference',
+      _ref: id
+    }))
+  } catch (e) {
+    console.warn("Erreur parsing refs:", e)
+    return []
+  }
+}
 
 // --- CRÉATION ---
 export async function createLocationAction(formData: FormData) {
-  const name = formData.get("name") as string
-  const descriptionText = formData.get("description") as string
+  const name = getString(formData, "name")
+  const descriptionText = getString(formData, "description")
   
-  // Transformation du texte brut en "Portable Text" (blocs)
-  // C'est le format obligatoire pour Sanity
+  // Transformation Texte -> Bloc
   const description = descriptionText ? [
     {
       _type: 'block',
@@ -20,25 +36,17 @@ export async function createLocationAction(formData: FormData) {
     }
   ] : []
 
-  // Parsing des listes d'IDs
-  let npcsRefs = [], monstersRefs = []
-  try {
-    const n = formData.get("npcs") as string; 
-    if(n) npcsRefs = JSON.parse(n).map((id:string) => ({ _type: 'reference', _ref: id, _key: id }));
-    
-    const m = formData.get("monsters") as string; 
-    if(m) monstersRefs = JSON.parse(m).map((id:string) => ({ _type: 'reference', _ref: id, _key: id }));
-  } catch(e) {}
+  const npcs = parseRefs(getString(formData, "npcs"))
+  const monsters = parseRefs(getString(formData, "monsters"))
 
   try {
     await writeClient.create({
       _type: "location",
       name,
       description,
-      npcs: npcsRefs,
-      monsters: monstersRefs
+      npcs,
+      monsters
     })
-    console.log(`✅ Lieu créé : ${name}`)
   } catch (error) {
     console.error("Erreur création:", error)
     throw new Error("Impossible de créer le lieu")
@@ -50,10 +58,11 @@ export async function createLocationAction(formData: FormData) {
 
 // --- MISE À JOUR ---
 export async function updateLocationAction(id: string, formData: FormData) {
-  const name = formData.get("name") as string
-  const descriptionText = formData.get("description") as string
+  const name = getString(formData, "name")
+  const descriptionText = getString(formData, "description")
   
-  // Même logique de conversion texte -> bloc
+  // Note: Si descriptionText est vide, on pourrait vouloir GARDER l'ancienne description riche
+  // Pour l'instant, on écrase tout (MVP). Pour faire mieux, il faudrait vérifier si le champ a changé.
   const description = descriptionText ? [
     {
       _type: 'block',
@@ -63,24 +72,16 @@ export async function updateLocationAction(id: string, formData: FormData) {
     }
   ] : []
 
-  let npcsRefs = [], monstersRefs = []
-  try {
-    const n = formData.get("npcs") as string; 
-    if(n) npcsRefs = JSON.parse(n).map((id:string) => ({ _type: 'reference', _ref: id, _key: id }));
-    
-    const m = formData.get("monsters") as string; 
-    if(m) monstersRefs = JSON.parse(m).map((id:string) => ({ _type: 'reference', _ref: id, _key: id }));
-  } catch(e) {}
+  const npcs = parseRefs(getString(formData, "npcs"))
+  const monsters = parseRefs(getString(formData, "monsters"))
 
   try {
     await writeClient.patch(id).set({
       name,
       description,
-      npcs: npcsRefs,
-      monsters: monstersRefs
+      npcs,
+      monsters
     }).commit()
-    
-    console.log(`✅ Lieu mis à jour : ${name}`)
   } catch (error) {
     console.error("Erreur update:", error)
     throw new Error("Impossible de modifier le lieu")
@@ -99,7 +100,6 @@ export async function deleteLocationAction(id: string) {
     console.error("Erreur suppression:", err)
     throw new Error("Erreur suppression")
   }
-  
   revalidatePath("/locations")
   redirect("/locations")
 }

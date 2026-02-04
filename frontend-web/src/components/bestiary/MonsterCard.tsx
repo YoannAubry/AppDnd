@@ -5,6 +5,7 @@ import { Badge } from '../ui/Badge';
 import { Monster } from '../../types';
 import { urlFor } from '../../lib/sanity';
 
+
 interface MonsterCardProps {
   monster: Monster;
 }
