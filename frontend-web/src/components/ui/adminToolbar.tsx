@@ -1,12 +1,13 @@
 "use client"
 import Link from "next/link"
 import { deleteMonsterAction } from "../../app/actions/bestiary"
-import { deleteNPCAction } from "../../app/actions/npc" // Ajoute cet import
+import { deleteNPCAction } from "../../app/actions/npc" 
+import { deleteLocationAction } from "../../app/actions/location"
 
 interface AdminToolbarProps {
   id: string
   editUrl: string
-  type: 'monster' | 'npc' // On ajoute le type
+  type: 'monster' | 'npc' | 'location'
 }
 
 export function AdminToolbar({ id, editUrl, type }: AdminToolbarProps) {
@@ -17,7 +18,9 @@ export function AdminToolbar({ id, editUrl, type }: AdminToolbarProps) {
         await deleteMonsterAction(id)
       } else if (type === 'npc') {
         await deleteNPCAction(id)
-      }
+      } else if (type === 'location') {
+        await deleteLocationAction(id)
+      } 
     }
   }
 
