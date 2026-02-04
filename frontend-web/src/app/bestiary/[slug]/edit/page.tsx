@@ -1,5 +1,5 @@
 import { client } from "../../../../lib/sanity"
-import { updateMonsterAction } from "../../../../app/actions" // Vérifie ton import
+import { updateMonsterAction } from "../../../../app/actions/bestiary" // Vérifie ton import
 import EditMonsterForm from "./EditMonsterForm" // On va créer ce composant client séparé
 
 // Server Component pour fetcher les données
