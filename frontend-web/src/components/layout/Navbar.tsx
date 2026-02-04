@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation" // Pour savoir sur quelle page on 
 
 const NAV_LINKS = [
   { href: "/campaigns", label: "📜 Aventures" },
+  { href: "/locations", label: "🗺️ Lieux" },
+  { href: "/npcs", label: "👤 Personnages" },
   { href: "/bestiary", label: "🐉 Bestiaire" },
   { href: "/tracker", label: "⚔️ Combat" },
   { href: "/players", label: "🛡️ Groupe" },
