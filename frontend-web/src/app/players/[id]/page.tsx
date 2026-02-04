@@ -1,5 +1,6 @@
 import { client, urlFor } from "../../../lib/sanity"
 import Link from "next/link"
+import { AdminToolbar } from "../../../components/ui/adminToolbar"
 
 async function getPlayer(id: string) {
   return await client.fetch(`*[_type == "player" && _id == $id][0]{
@@ -59,6 +60,12 @@ export default async function PlayerDetailPage(props: { params: Promise<{ id: st
         </div>
 
       </div>
+
+      <AdminToolbar 
+          id={player._id} 
+          editUrl={`/players/${params.id}/edit`} 
+          type="player"
+        />
     </div>
   )
 }

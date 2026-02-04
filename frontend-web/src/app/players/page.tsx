@@ -13,7 +13,12 @@ export default async function PlayersPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-8">
-      <h1 className="text-4xl font-bold mb-8 text-blue-400">🛡️ La Compagnie</h1>
+      <div className="flex justify-between items-end mb-8 border-b border-slate-800 pb-6">
+        <h1 className="text-4xl font-bold text-blue-400">🛡️ La Compagnie</h1>
+        <Link href="/players/new" className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-bold">
+          + Nouveau
+        </Link>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {players.map((p: Player) => (

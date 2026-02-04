@@ -4,12 +4,14 @@ import { deleteMonsterAction } from "../../app/actions/bestiary"
 import { deleteNPCAction } from "../../app/actions/npc" 
 import { deleteLocationAction } from "../../app/actions/location"
 import { deleteCampaignAction } from "../../app/actions/campaign"
+import { deletePlayerAction } from "../../app/actions/player"
+
 
 
 interface AdminToolbarProps {
   id: string
   editUrl: string
-  type: 'monster' | 'npc' | 'location' | 'campaign'
+  type: 'monster' | 'npc' | 'location' | 'campaign' | 'player'
 }
 
 export function AdminToolbar({ id, editUrl, type }: AdminToolbarProps) {
@@ -24,6 +26,8 @@ export function AdminToolbar({ id, editUrl, type }: AdminToolbarProps) {
         await deleteLocationAction(id)
       }  else if (type === 'campaign') {
         await deleteCampaignAction(id)
+      } else if (type === 'player') {
+        await deletePlayerAction(id)
       } 
     }
   }
