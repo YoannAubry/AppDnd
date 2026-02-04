@@ -3,11 +3,13 @@ import Link from "next/link"
 import { deleteMonsterAction } from "../../app/actions/bestiary"
 import { deleteNPCAction } from "../../app/actions/npc" 
 import { deleteLocationAction } from "../../app/actions/location"
+import { deleteCampaignAction } from "../../app/actions/campaign"
+
 
 interface AdminToolbarProps {
   id: string
   editUrl: string
-  type: 'monster' | 'npc' | 'location'
+  type: 'monster' | 'npc' | 'location' | 'campaign'
 }
 
 export function AdminToolbar({ id, editUrl, type }: AdminToolbarProps) {
@@ -20,6 +22,8 @@ export function AdminToolbar({ id, editUrl, type }: AdminToolbarProps) {
         await deleteNPCAction(id)
       } else if (type === 'location') {
         await deleteLocationAction(id)
+      }  else if (type === 'campaign') {
+        await deleteCampaignAction(id)
       } 
     }
   }

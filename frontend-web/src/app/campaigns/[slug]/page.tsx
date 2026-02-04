@@ -1,6 +1,8 @@
 import { client, urlFor } from "../../../lib/sanity"
 import Link from "next/link"
-import { ActView } from "../../../components/campaign/ActView" // <-- On importe notre composant
+import { ActView } from "../../../components/campaign/ActView" 
+import { AdminToolbar } from "../../../components/ui/adminToolbar"
+
 
 // GROQ Query : On va chercher la campagne ET on "déroule" les références (Lieux -> PNJ -> Monstres)
 async function getCampaign(slug: string) {
@@ -92,6 +94,12 @@ export default async function CampaignDetailPage(props: { params: Promise<{ slug
         </div>
 
       </div>
+
+      <AdminToolbar 
+        id={campaign._id} 
+        editUrl={`/campaigns/${params.slug}/edit`} 
+        type="campaign" 
+      />
     </div>
   )
 }
