@@ -1,7 +1,8 @@
 "use client"
 import Link from "next/link"
 import { useState } from "react"
-import { usePathname } from "next/navigation" // Pour savoir sur quelle page on est (optionnel, pour le style)
+import { usePathname } from "next/navigation"
+import { ThemeSwitcher } from "../ui/ThemeSwitcher"
 
 const NAV_LINKS = [
   { href: "/campaigns", label: "📜 Aventures" },
@@ -16,73 +17,83 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
-  // Fonction pour fermer le menu quand on clique
   const closeMenu = () => setIsOpen(false)
 
   return (
-    <nav className="bg-slate-950 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
+    <nav className="border-b border-[var(--border-main)] bg-[var(--bg-main)] backdrop-blur-md sticky top-0 z-50 transition-colors duration-300 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
           {/* LOGO */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-4 shrink-0">
             <Link 
               href="/" 
-              className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition"
-              onClick={closeMenu} // Ferme aussi si on clique sur le logo
+              className="text-2xl font-bold bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-hover)] bg-clip-text text-transparent hover:opacity-80 transition font-serif"
+              onClick={closeMenu}
             >
               🎲 Cockpit MJ
             </Link>
           </div>
 
-          {/* DESKTOP MENU (Caché sur mobile) */}
-          <div className="hidden md:flex gap-6">
+          {/* DESKTOP MENU */}
+          <div className="hidden md:flex gap-1 overflow-x-auto no-scrollbar">
             {NAV_LINKS.map((link) => (
               <Link 
                 key={link.href}
                 href={link.href} 
-                className={`text-sm font-medium transition ${
-                  pathname.startsWith(link.href) 
-                    ? "text-purple-400 font-bold" 
-                    : "text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md"
-                }`}
+                className={`
+                  text-sm font-medium transition px-3 py-2 rounded-md whitespace-nowrap
+                  ${pathname.startsWith(link.href) 
+                    ? "text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 font-bold" 
+                    : "text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-input)]"
+                  }
+                `}
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          {/* MOBILE BURGER BUTTON */}
-          <div className="md:hidden">
-            <button 
-              onClick={() => setIsOpen(!isOpen)} 
-              className="text-slate-300 hover:text-white p-2 focus:outline-none"
-              aria-label="Menu"
-            >
-              {isOpen ? (
-                <span className="text-2xl">✖</span>
-              ) : (
-                <span className="text-2xl">☰</span>
-              )}
-            </button>
+          {/* DROITE : THEME & MOBILE TOGGLE */}
+          <div className="flex items-center gap-3 shrink-0">
+            
+            <ThemeSwitcher />
+
+            {/* Burger Mobile */}
+            <div className="md:hidden">
+              <button 
+                onClick={() => setIsOpen(!isOpen)} 
+                className="text-[var(--text-main)] hover:text-[var(--accent-primary)] p-2 transition focus:outline-none"
+                aria-label="Menu"
+              >
+                {isOpen ? (
+                  <span className="text-xl font-bold">✕</span>
+                ) : (
+                  <span className="text-2xl">☰</span>
+                )}
+              </button>
+            </div>
           </div>
+
         </div>
       </div>
 
-      {/* MOBILE MENU (S'affiche si isOpen est true) */}
+      {/* MOBILE MENU */}
       {isOpen && (
-        <div className="md:hidden bg-slate-900 border-b border-slate-800 absolute w-full left-0 animate-in slide-in-from-top-5 duration-200 shadow-2xl">
-          <div className="px-4 pt-2 pb-4 space-y-2">
+        <div className="md:hidden border-t border-[var(--border-main)] bg-[var(--bg-card)] absolute w-full left-0 shadow-2xl animate-in slide-in-from-top-2">
+          <div className="px-4 pt-2 pb-4 space-y-1">
             {NAV_LINKS.map((link) => (
               <Link 
                 key={link.href}
                 href={link.href}
-                onClick={closeMenu} // <--- C'EST ICI QUE LA MAGIE OPÈRE
-                className={`block px-3 py-3 rounded-md text-base font-medium transition ${
-                  pathname.startsWith(link.href)
-                    ? "bg-purple-900/20 text-purple-400 border-l-4 border-purple-500"
-                    : "text-slate-300 hover:text-white hover:bg-slate-800"
-                }`}
+                onClick={closeMenu}
+                className={`
+                  block px-4 py-3 rounded-md text-base font-medium transition
+                  ${pathname.startsWith(link.href)
+                    ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-l-4 border-[var(--accent-primary)]"
+                    : "text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-input)]"
+                  }
+                `}
               >
                 {link.label}
               </Link>

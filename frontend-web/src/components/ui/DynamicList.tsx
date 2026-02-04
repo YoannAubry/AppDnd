@@ -28,28 +28,28 @@ export function DynamicList({ label, items, onChange }: DynamicListProps) {
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-bold text-slate-400 uppercase tracking-wide border-b border-slate-700 pb-1 mb-2 flex justify-between items-center">
+      <label className="block text-sm font-bold text-[var(--text-muted)] uppercase tracking-wide border-b border-[var(--border-main)] pb-1 mb-2 flex justify-between items-center">
         {label}
-        <button type="button" onClick={addItem} className="text-xs bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded text-green-400">
+        <button type="button" onClick={addItem} className="text-xs bg-input hover:bg-slate-700 px-2 py-1 rounded text-green-400">
           + Ajouter
         </button>
       </label>
 
       {items.map((item, index) => (
-        <div key={index} className="flex gap-2 items-start bg-slate-950/50 p-2 rounded border border-slate-800">
+        <div key={index} className="flex gap-2 items-start bg-background/50 p-2 rounded border border-[var(--border-main)]">
           <div className="flex-1 space-y-1">
             <input 
               type="text" 
               placeholder="Nom (ex: Morsure)" 
               value={item.name}
               onChange={(e) => updateItem(index, 'name', e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-sm font-bold text-white placeholder-slate-600"
+              className="w-full theme-card border border-[var(--border-main)] rounded px-2 py-1 text-sm font-bold text-white placeholder-slate-600"
             />
             <textarea 
               placeholder="Description..." 
               value={item.desc}
               onChange={(e) => updateItem(index, 'desc', e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 h-16 resize-none placeholder-slate-600"
+              className="w-full theme-card border border-[var(--border-main)] rounded px-2 py-1 text-xs text-slate-300 h-16 resize-none placeholder-slate-600"
             />
           </div>
           <button type="button" onClick={() => removeItem(index)} className="text-slate-600 hover:text-red-500 font-bold px-1">

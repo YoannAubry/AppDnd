@@ -1,4 +1,4 @@
-import { Player } from "@/types"
+import { Player } from "../../types"
 import { client, urlFor } from "../../lib/sanity"
 import Link from "next/link"
 
@@ -12,10 +12,10 @@ export default async function PlayersPage() {
   const players = await getPlayers()
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-8">
-      <div className="flex justify-between items-end mb-8 border-b border-slate-800 pb-6">
+    <div className="min-h-screen bg-background text-[var(--text-main)] p-8">
+      <div className="flex justify-between items-end mb-8 border-b border-[var(--border-main)] pb-6">
         <h1 className="text-4xl font-bold text-blue-400">🛡️ La Compagnie</h1>
-        <Link href="/players/new" className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg font-bold">
+        <Link href="/players/new" className="bg-green-600 hover:bg-green-500 text-[var(--text-main)] px-4 py-2 rounded-lg font-bold">
           + Nouveau
         </Link>
       </div>
@@ -23,10 +23,10 @@ export default async function PlayersPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {players.map((p: Player) => (
           <Link href={`/players/${p._id}`} key={p._id} className="block group h-full">
-            <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 shadow-lg hover:border-blue-500 transition h-full flex items-center p-4 gap-4">
+            <div className="theme-card rounded-xl overflow-hidden border border-[var(--border-main)] shadow-lg hover:border-blue-500 transition h-full flex items-center p-4 gap-4">
               
               {/* Avatar Rond */}
-              <div className="w-16 h-16 rounded-full border-2 border-slate-600 overflow-hidden shrink-0 bg-slate-800">
+              <div className="w-16 h-16 rounded-full border-2 border-slate-600 overflow-hidden shrink-0 bg-input">
                 {p.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={urlFor(p.avatar).width(100).url()} className="w-full h-full object-cover" />
@@ -36,12 +36,12 @@ export default async function PlayersPage() {
               </div>
 
               <div className="flex-1">
-                <h2 className="text-xl font-bold text-white mb-1">{p.name}</h2>
-                <p className="text-slate-400 text-sm">{p.class} • {p.race}</p>
+                <h2 className="text-xl font-bold text-[var(--text-main)] mb-1">{p.name}</h2>
+                <p className="text-[var(--text-muted)] text-sm">{p.class} • {p.race}</p>
               </div>
 
               {/* Mini Stats */}
-              <div className="flex flex-col gap-1 text-right border-l border-slate-800 pl-4">
+              <div className="flex flex-col gap-1 text-right border-l border-[var(--border-main)] pl-4">
                 <span className="text-green-400 font-bold text-sm">PV {p.hpMax}</span>
                 <span className="text-blue-400 font-bold text-sm">CA {p.ac}</span>
               </div>

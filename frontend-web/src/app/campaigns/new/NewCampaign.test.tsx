@@ -46,6 +46,6 @@ test('Peut sélectionner un lieu dans un acte', () => {
   // Clic sur Taverne (devrait changer de classe/style)
   fireEvent.click(taverneBtn)
   
-  // On vérifie qu'il a la classe active (bg-purple-600)
-  expect(taverneBtn.className).toContain('bg-purple-600')
+  // On vérifie qu'il a la classe active (bg-accent)
+  expect(taverneBtn.className).toContain('bg-[var(--accent-primary)]')
 })

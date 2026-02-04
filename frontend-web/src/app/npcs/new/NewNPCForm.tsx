@@ -8,20 +8,25 @@ export default function NewNPCForm({ monstersList }: { monstersList: any[] }) {
   const [inventory, setInventory] = useState([{ name: "", desc: "" }])
   const [combatType, setCombatType] = useState("none")
 
+  const handleSubmit = async (formData: FormData) => {
+    formData.set("inventory", JSON.stringify(inventory))
+    await createNPCAction(formData)
+  }
+
   return (
-    <form action={createNPCAction} className="space-y-6">
+    <form action={handleSubmit} className="space-y-6">
       
       <div className="grid grid-cols-2 gap-4">
-        <div className="col-span-2"><label className="block text-sm text-slate-400 mb-1">Nom</label><input name="name" required className="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white" /></div>
-        <div><label className="block text-sm text-slate-400 mb-1">Rôle</label><input name="role" className="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white" /></div>
+        <div className="col-span-2"><label className="block text-sm text-[var(--text-muted)] mb-1 font-bold">Nom</label><input name="name" required className="w-full theme-input" /></div>
+        <div><label className="block text-sm text-[var(--text-muted)] mb-1 font-bold">Rôle</label><input name="role" className="w-full theme-input" /></div>
       </div>
 
-      <div><label className="block text-sm text-slate-400 mb-1">Personnalité</label><textarea name="personality" rows={3} className="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white" /></div>
-      <div><label className="block text-sm text-slate-400 mb-1">Histoire</label><textarea name="history" rows={3} className="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white" /></div>
+      <div><label className="block text-sm text-[var(--text-muted)] mb-1 font-bold">Personnalité</label><textarea name="personality" rows={3} className="w-full theme-input" /></div>
+      <div><label className="block text-sm text-[var(--text-muted)] mb-1 font-bold">Histoire</label><textarea name="history" rows={3} className="w-full theme-input" /></div>
 
-      <div className="bg-slate-800/50 p-4 rounded border border-slate-700">
-        <label className="block text-sm font-bold text-slate-300 mb-3">Combat</label>
-        <div className="flex gap-4 mb-4">
+      <div className="bg-[var(--bg-input)] p-4 rounded border border-[var(--border-main)]">
+        <label className="block text-sm font-bold text-[var(--text-main)] mb-3">Combat</label>
+        <div className="flex gap-4 mb-4 text-[var(--text-muted)]">
           <label className="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="combatType" value="none" checked={combatType === 'none'} onChange={() => setCombatType('none')} /> Civil</label>
           <label className="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="combatType" value="template" checked={combatType === 'template'} onChange={() => setCombatType('template')} /> Template</label>
           <label className="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="combatType" value="custom" checked={combatType === 'custom'} onChange={() => setCombatType('custom')} /> Custom</label>
@@ -29,8 +34,8 @@ export default function NewNPCForm({ monstersList }: { monstersList: any[] }) {
 
         {combatType === 'template' && (
            <div>
-             <label className="text-xs text-slate-500 block mb-1">Modèle</label>
-             <select name="monsterTemplate" className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white">
+             <label className="text-xs text-[var(--text-muted)] block mb-1">Modèle</label>
+             <select name="monsterTemplate" className="w-full theme-input">
                <option value="">-- Choisir --</option>
                {monstersList.map((m: any) => <option key={m._id} value={m._id}>{m.name}</option>)}
              </select>
@@ -39,18 +44,17 @@ export default function NewNPCForm({ monstersList }: { monstersList: any[] }) {
 
         {combatType === 'custom' && (
            <div className="grid grid-cols-2 gap-4">
-             <input name="hp" placeholder="PV" className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-center" />
-             <input name="ac" type="number" placeholder="CA" className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-center" />
+             <input name="hp" placeholder="PV" className="w-full theme-input text-center" />
+             <input name="ac" type="number" placeholder="CA" className="w-full theme-input text-center" />
            </div>
         )}
       </div>
 
       <DynamicList label="Inventaire" namePrefix="inv" items={inventory} onChange={setInventory} />
-      <input type="hidden" name="inventory" value={JSON.stringify(inventory)} />
 
-      <div className="pt-6 flex justify-end gap-4">
-        <Link href="/npcs" className="px-4 py-2 text-slate-400 hover:text-white">Annuler</Link>
-        <button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-bold">Enregistrer</button>
+      <div className="pt-6 flex justify-end gap-4 border-t border-[var(--border-main)]">
+        <Link href="/npcs" className="px-4 py-2 text-[var(--text-muted)] hover:text-[var(--text-main)]">Annuler</Link>
+        <button type="submit" className="theme-btn-primary">Enregistrer</button>
       </div>
 
     </form>

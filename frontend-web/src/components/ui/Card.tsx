@@ -12,13 +12,13 @@ export function Card({ children, className = "", onClick }: CardProps) {
     <div 
       onClick={onClick}
       className={`
-        bg-slate-800 
+        bg-input 
         rounded-xl 
-        border border-slate-700 
+        border border-[var(--border-main)] 
         shadow-lg 
         overflow-hidden 
         transition-all duration-300
-        hover:border-purple-500 
+        hover:border-accent 
         hover:shadow-purple-500/20 
         ${onClick ? 'cursor-pointer' : ''}
         ${className}

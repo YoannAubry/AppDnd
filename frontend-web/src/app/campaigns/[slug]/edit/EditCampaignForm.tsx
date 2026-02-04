@@ -1,6 +1,6 @@
 "use client"
-import { updateCampaignAction } from "../../../../app/actions/campaign"
-import { ActsEditor } from "../../../../components/campaign/ActsEditor"
+import { updateCampaignAction } from "@/app/actions/campaign"
+import { ActsEditor } from "@/components/campaign/ActsEditor"
 import Link from "next/link"
 
 export default function EditCampaignForm({ campaign, allLocations }: any) {
@@ -9,29 +9,29 @@ export default function EditCampaignForm({ campaign, allLocations }: any) {
       
       <div className="grid grid-cols-4 gap-4">
         <div className="col-span-3">
-          <label className="block text-sm text-slate-400 mb-1 font-bold">Titre</label>
-          <input name="title" defaultValue={campaign.title} required className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-purple-500 outline-none" />
+          <label className="block text-sm text-[var(--text-muted)] mb-1 font-bold">Titre</label>
+          <input name="title" defaultValue={campaign.title} required className="w-full theme-input" />
         </div>
         <div>
-          <label className="block text-sm text-slate-400 mb-1 font-bold">Niveaux</label>
-          <input name="level" defaultValue={campaign.level} required className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white text-center" />
+          <label className="block text-sm text-[var(--text-muted)] mb-1 font-bold">Niveaux</label>
+          <input name="level" defaultValue={campaign.level} required className="w-full theme-input text-center" />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm text-slate-400 mb-1 font-bold">Synopsis</label>
-        <textarea name="synopsis" defaultValue={campaign.synopsis} rows={3} className="w-full bg-slate-950 border border-slate-700 rounded p-3 text-white focus:border-purple-500 outline-none resize-none" />
+        <label className="block text-sm text-[var(--text-muted)] mb-1 font-bold">Synopsis</label>
+        <textarea name="synopsis" defaultValue={campaign.synopsis} rows={3} className="w-full theme-input resize-none" />
       </div>
 
-      <div className="pt-4 border-t border-slate-800">
+      <div className="pt-4 border-t border-[var(--border-main)]">
         <ActsEditor initialActs={campaign.acts || []} allLocations={allLocations} />
       </div>
 
-      <div className="pt-6 flex justify-end gap-4 border-t border-slate-800 mt-8">
-        <Link href={`/campaigns/${campaign.slug.current}`} className="px-6 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+      <div className="pt-6 flex justify-end gap-4 border-t border-[var(--border-main)] mt-8">
+        <Link href={`/campaigns/${campaign.slug.current}`} className="px-6 py-3 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-input)] transition">
           Annuler
         </Link>
-        <button type="submit" className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition transform hover:scale-105">
+        <button type="submit" className="theme-btn-primary">
           Sauvegarder
         </button>
       </div>

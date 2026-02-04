@@ -27,5 +27,5 @@ test('Le menu mobile s\'ouvre au clic', () => {
   fireEvent.click(burger)
   
   // Après clic, le bouton de fermeture ✖ doit apparaître
-  expect(screen.getByText('✖')).toBeDefined()
+  expect(screen.getByText('✕')).toBeDefined()
 })

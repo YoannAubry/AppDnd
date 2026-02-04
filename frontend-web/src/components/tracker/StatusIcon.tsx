@@ -3,7 +3,7 @@ import { Badge } from "../ui/Badge"
 const STATUSES = {
   blinded: { label: "👁️ Aveuglé", color: "bg-gray-800 text-white" },
   charmed: { label: "❤️ Charmé", color: "bg-pink-500 text-white" },
-  frightened: { label: "😱 Effrayé", color: "bg-purple-600 text-white" },
+  frightened: { label: "😱 Effrayé", color: "bg-accent text-white" },
   grappled: { label: "🪢 Agrippé", color: "bg-orange-600 text-white" },
   paralyzed: { label: "⚡ Paralysé", color: "bg-yellow-400 text-black" },
   poisoned: { label: "🤢 Empoisonné", color: "bg-green-600 text-white" },

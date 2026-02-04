@@ -16,8 +16,8 @@ export default async function EditNPCPage(props: { params: Promise<{ id: string 
   if (!npc) return <div>Introuvable</div>
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-8 flex justify-center pb-20">
-      <div className="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-xl p-8 shadow-2xl">
+    <div className="min-h-screen bg-background text-[var(--text-main)] p-8 flex justify-center pb-20">
+      <div className="max-w-2xl w-full theme-card border border-[var(--border-main)] rounded-xl p-8 shadow-2xl">
         <h1 className="text-3xl font-bold text-blue-500 mb-8 flex items-center gap-3">
           <span>✏️</span> Modifier {npc.name}
         </h1>

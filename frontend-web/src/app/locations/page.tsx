@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { client, urlFor } from "@/lib/sanity"
+import { client, urlFor } from "../../lib/sanity"
 // Pas besoin d'importer le type Location complet ici car on utilise une version simplifiée
 
 // Type spécifique pour l'affichage en liste (avec compteurs)
@@ -40,24 +40,24 @@ export default function LocationsPage() {
   const filtered = locations.filter(l => l.name.toLowerCase().includes(search.toLowerCase()))
 
   return (
-    <div className="p-8 max-w-7xl mx-auto min-h-screen bg-slate-950 text-slate-100">
+    <div className="p-8 max-w-7xl mx-auto min-h-screen bg-background text-[var(--text-main)]">
       
       {/* HEADER + RECHERCHE + BOUTON */}
-      <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-slate-800 pb-6 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[var(--border-main)] pb-6 gap-4">
         <div>
           <h1 className="text-4xl font-bold text-amber-500">🗺️ Lieux</h1>
-          <p className="text-slate-400 mt-2">Atlas du monde ({filtered.length})</p>
+          <p className="text-[var(--text-muted)] mt-2">Atlas du monde ({filtered.length})</p>
         </div>
         
         <div className="flex gap-4 w-full md:w-auto">
           <input
             type="text"
             placeholder="Rechercher un lieu..."
-            className="bg-slate-900 border border-slate-700 text-white px-4 py-2 rounded-lg w-full md:w-64 focus:outline-none focus:border-amber-500 transition"
+            className="theme-card border border-[var(--border-main)] text-[var(--text-main)] px-4 py-2 rounded-lg w-full md:w-64 focus:outline-none focus:border-amber-500 transition"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Link href="/locations/new" className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-bold shadow-lg transition whitespace-nowrap">
+          <Link href="/locations/new" className="bg-green-600 hover:bg-green-500 text-[var(--text-main)] px-4 py-2 rounded-lg flex items-center gap-2 font-bold shadow-lg transition whitespace-nowrap">
             + Nouveau
           </Link>
         </div>
@@ -70,10 +70,10 @@ export default function LocationsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map(loc => (
             <Link href={`/locations/${loc._id}`} key={loc._id} className="group block">
-              <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-lg hover:border-amber-500/50 transition h-full flex flex-col hover:-translate-y-1">
+              <div className="theme-card border border-[var(--border-main)] rounded-xl overflow-hidden shadow-lg hover:border-amber-500/50 transition h-full flex flex-col hover:-translate-y-1">
                 
                 {/* IMAGE */}
-                <div className="h-40 bg-slate-800 relative overflow-hidden">
+                <div className="h-40 bg-input relative overflow-hidden">
                   {loc.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img 
@@ -84,12 +84,11 @@ export default function LocationsPage() {
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl opacity-50">🏰</div>
                   )}
-                  <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-slate-900 to-transparent"></div>
                 </div>
 
                 {/* CONTENU */}
                 <div className="p-4 flex-1">
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-400 transition">{loc.name}</h3>
+                  <h3 className="text-xl font-bold text-[var(--text-main)] mb-2 group-hover:text-amber-400 transition">{loc.name}</h3>
                   <div className="flex gap-2">
                     {loc.npcCount > 0 && (
                       <span className="text-xs bg-blue-900/40 text-blue-200 px-2 py-1 rounded border border-blue-800/50 flex items-center gap-1">
@@ -114,7 +113,7 @@ export default function LocationsPage() {
       )}
 
       {!loading && filtered.length === 0 && (
-        <div className="text-center py-20 text-slate-500 border-2 border-dashed border-slate-800 rounded-xl">
+        <div className="text-center py-20 text-slate-500 border-2 border-dashed border-[var(--border-main)] rounded-xl">
           Aucun lieu trouvé.
         </div>
       )}

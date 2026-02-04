@@ -179,25 +179,25 @@ export default function TrackerPage() {
   if (!isLoaded) return null; // Hydration fix
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 flex flex-col md:flex-row gap-6">
+    <div className="min-h-screen bg-background text-[var(--text-main)] p-4 md:p-8 flex flex-col md:flex-row gap-6">
       
       {/* COLONNE GAUCHE : LISTE */}
       <div className="flex-1">
         
         {/* BARRE D'OUTILS */}
-        <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 mb-6 flex justify-between items-center shadow-lg">
+        <div className="theme-card p-4 rounded-xl border border-[var(--border-main)] mb-6 flex justify-between items-center shadow-lg">
           <div className="flex items-center gap-4">
             <div className="text-center">
               <span className="text-xs text-slate-500 uppercase font-bold">Round</span>
               <div className="text-2xl font-bold text-white">{round}</div>
             </div>
-            <button onClick={nextTurn} className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:scale-105">
+            <button onClick={nextTurn} className="bg-accent hover:bg-accent-hover text-white px-6 py-2 rounded-lg font-bold shadow-lg transition transform hover:scale-105">
               Tour Suivant ➜
             </button>
           </div>
           
           <div className="flex gap-2">
-            <button onClick={handleSort} className="bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded text-sm transition">
+            <button onClick={handleSort} className="bg-input hover:bg-slate-700 px-3 py-2 rounded text-sm transition">
               ⚡ Trier
             </button>
             <button onClick={() => { if(confirm('Tout vider ?')) setCombatants([]) }} className="bg-red-900/50 hover:bg-red-900 px-3 py-2 rounded text-sm text-red-200 transition">
@@ -213,7 +213,7 @@ export default function TrackerPage() {
               key={c.id} 
               className={`
                 relative p-4 rounded-lg border-2 transition-all duration-300
-                ${index === turnIndex ? 'border-purple-500 bg-slate-800 shadow-[0_0_15px_rgba(168,85,247,0.3)] scale-[1.02] z-10' : 'border-slate-800 bg-slate-900 opacity-90'}
+                ${index === turnIndex ? 'border-accent bg-input shadow-[0_0_15px_rgba(168,85,247,0.3)] scale-[1.02] z-10' : 'border-[var(--border-main)] theme-card opacity-90'}
                 ${c.hp === 0 ? 'opacity-50 grayscale' : ''}
               `}
             >
@@ -226,7 +226,7 @@ export default function TrackerPage() {
                     type="number" 
                     value={c.initiative} 
                     onChange={(e) => updateCombatant(c.id, { initiative: parseInt(e.target.value) || 0 })}
-                    className="w-12 h-10 text-center bg-slate-950 border border-slate-700 rounded font-bold text-xl focus:border-purple-500 focus:outline-none"
+                    className="w-12 h-10 text-center bg-background border border-[var(--border-main)] rounded font-bold text-xl focus:border-accent focus:outline-none"
                   />
                 </div>
 
@@ -248,13 +248,13 @@ export default function TrackerPage() {
                     </button>
                   </div>
                   
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400 mt-1">
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--text-muted)] mt-1">
                     <span className="flex items-center gap-1 whitespace-nowrap">
-                      🛡️ <input className="bg-transparent w-6 text-center border-b border-slate-700 focus:border-white outline-none" value={c.ac} onChange={(e) => updateCombatant(c.id, { ac: parseInt(e.target.value) })} />
+                      🛡️ <input className="bg-transparent w-6 text-center border-b border-[var(--border-main)] focus:border-white outline-none" value={c.ac} onChange={(e) => updateCombatant(c.id, { ac: parseInt(e.target.value) })} />
                     </span>
                     
                     <select 
-                      className="bg-slate-950 text-xs border border-slate-700 rounded px-1 py-0.5 outline-none focus:border-slate-500"
+                      className="bg-background text-xs border border-[var(--border-main)] rounded px-1 py-0.5 outline-none focus:border-slate-500"
                       onChange={(e) => {
                         if(e.target.value && !c.conditions.includes(e.target.value)) 
                           updateCombatant(c.id, { conditions: [...c.conditions, e.target.value] })
@@ -310,7 +310,7 @@ export default function TrackerPage() {
           ))}
           
           {combatants.length === 0 && (
-            <div className="text-center py-20 text-slate-600 border-2 border-dashed border-slate-800 rounded-xl">
+            <div className="text-center py-20 text-slate-600 border-2 border-dashed border-[var(--border-main)] rounded-xl">
               Le champ de bataille est vide...
             </div>
           )}
@@ -318,13 +318,13 @@ export default function TrackerPage() {
       </div>
 
       {/* COLONNE DROITE : AJOUTER */}
-      <div className="w-full md:w-80 bg-slate-900 p-4 rounded-xl border border-slate-800 h-fit sticky top-24 shadow-xl">
-        <h3 className="font-bold text-slate-300 mb-4 uppercase text-sm tracking-wider border-b border-slate-800 pb-2">Ajouter</h3>
+      <div className="w-full md:w-80 theme-card p-4 rounded-xl border border-[var(--border-main)] h-fit sticky top-24 shadow-xl">
+        <h3 className="font-bold text-slate-300 mb-4 uppercase text-sm tracking-wider border-b border-[var(--border-main)] pb-2">Ajouter</h3>
         
         <input 
           type="text" 
           placeholder="Rechercher..." 
-          className="w-full bg-slate-950 border border-slate-700 text-white px-4 py-3 rounded-lg focus:border-purple-500 focus:outline-none mb-4 transition"
+          className="w-full bg-background border border-[var(--border-main)] text-white px-4 py-3 rounded-lg focus:border-accent focus:outline-none mb-4 transition"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -336,7 +336,7 @@ export default function TrackerPage() {
             <div 
               key={result._id} 
               onClick={() => addCombatant(result, result._type as any)}
-              className="flex items-center gap-3 p-2 hover:bg-slate-800 rounded cursor-pointer border border-transparent hover:border-slate-700 transition group"
+              className="flex items-center gap-3 p-2 hover:bg-input rounded cursor-pointer border border-transparent hover:border-[var(--border-main)] transition group"
             >
               <div className="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center text-lg overflow-hidden shrink-0">
                 {result.image ? <img src={urlFor(result.image).width(50).url()} className="w-full h-full object-cover"/> : (result._type === 'player' ? '🛡️' : result._type === 'npc' ? '👤' : '👾')}
