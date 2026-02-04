@@ -20,15 +20,18 @@ function SortableActItem({ act, index, allLocations, onUpdate, onRemove }: any) 
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg p-4 relative group mb-4 shadow-sm">
+    <div ref={setNodeRef} style={style} className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-3 md:p-4 relative group mb-4 shadow-sm">
       
-      <div {...attributes} {...listeners} className="absolute top-4 left-4 text-[var(--text-muted)] cursor-grab hover:text-[var(--text-main)] p-1 text-xl select-none" title="Déplacer">
+      {/* POIGNÉE & DELETE */}
+      <div {...attributes} {...listeners} className="absolute top-4 left-2 text-[var(--text-muted)] cursor-grab hover:text-[var(--text-main)] p-2 text-xl select-none touch-none active:text-[var(--accent-primary)]">
         ↕
       </div>
-
-      <button type="button" onClick={() => onRemove(act.id)} className="absolute top-2 right-2 text-[var(--text-muted)] hover:text-red-500 font-bold px-2 text-xl">×</button>
+      <button type="button" onClick={() => onRemove(act.id)} className="absolute top-2 right-2 text-[var(--text-muted)] hover:text-red-500 font-bold px-3 py-1 text-xl">
+        ×
+      </button>
       
-      <div className="ml-10 grid gap-3 mb-4">
+      {/* CONTENU (Inputs) */}
+      <div className="ml-10 md:ml-12 grid gap-3 mb-4 pr-6">
         <input 
           value={act.title} 
           onChange={(e) => onUpdate(index, 'title', e.target.value)}
@@ -38,23 +41,24 @@ function SortableActItem({ act, index, allLocations, onUpdate, onRemove }: any) 
         <textarea 
           value={act.summary}
           onChange={(e) => onUpdate(index, 'summary', e.target.value)}
-          className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded p-2 text-sm text-[var(--text-main)] h-20 w-full resize-none placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)]"
+          className="bg-[var(--bg-card)] border border-[var(--border-main)] rounded p-2 text-sm text-[var(--text-main)] h-20 w-full resize-none placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-primary)]"
           placeholder="Résumé rapide de ce qui se passe..."
         />
       </div>
 
-      <div className="ml-10">
-        <label className="text-[10px] uppercase font-bold text-[var(--text-muted)] mb-2 block">Lieux visités</label>
-        <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+      {/* SÉLECTION LIEUX (Tags) */}
+      <div className="ml-10 md:ml-12 pr-2">
+        <label className="text-[10px] uppercase font-bold text-[var(--text-muted)] mb-2 block tracking-wide">Lieux visités</label>
+        <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
           {allLocations.map((loc:any) => (
             <button
               key={loc._id}
               type="button"
               onClick={() => toggleLocation(loc._id)}
-              className={`text-xs px-2 py-1 rounded border transition ${
+              className={`text-xs px-2 py-1 rounded border transition select-none ${
                 act.locationIds?.includes(loc._id) 
-                  ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] text-[var(--accent-text)]' 
-                  : 'bg-[var(--bg-input)] border-[var(--border-main)] text-[var(--text-muted)] hover:border-[var(--text-muted)]'
+                  ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] text-[var(--accent-text)] font-bold' 
+                  : 'bg-[var(--bg-card)] border-[var(--border-main)] text-[var(--text-muted)] hover:border-[var(--text-main)]'
               }`}
             >
               {loc.name}
@@ -100,10 +104,11 @@ export function ActsEditor({ initialActs, allLocations }: { initialActs: any[], 
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center border-b border-[var(--border-main)] pb-2">
+      {/* HEADER ÉDITEUR */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-[var(--border-main)] pb-4 gap-3">
         <h3 className="text-lg font-bold text-[var(--text-main)] uppercase tracking-wide">Structure de l'histoire</h3>
-        <button type="button" onClick={addAct} className="bg-[var(--bg-input)] hover:bg-[var(--bg-card)] text-[var(--accent-primary)] px-3 py-1 rounded text-sm font-bold border border-[var(--border-main)] transition">
-          + Ajouter un Acte
+        <button type="button" onClick={addAct} className="w-full sm:w-auto theme-btn-primary flex items-center justify-center gap-2 text-sm">
+          <span>+</span> Ajouter un Acte
         </button>
       </div>
 
@@ -117,7 +122,7 @@ export function ActsEditor({ initialActs, allLocations }: { initialActs: any[], 
         </SortableContext>
       </DndContext>
       
-      {acts.length === 0 && <p className="text-center text-[var(--text-muted)] italic py-4">L'histoire est encore vide.</p>}
+      {acts.length === 0 && <div className="text-center text-[var(--text-muted)] italic py-8 border-2 border-dashed border-[var(--border-main)] rounded-lg bg-[var(--bg-input)]/30">L'histoire est encore vide.</div>}
     </div>
   )
 }

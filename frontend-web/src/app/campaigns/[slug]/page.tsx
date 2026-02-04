@@ -51,7 +51,7 @@ export default async function CampaignDetailPage(props: { params: Promise<{ slug
             <span className="bg-[var(--accent-primary)] text-[var(--bg-main)] px-3 py-1 rounded text-sm font-sans font-bold shadow mb-4 inline-block">
               NIVEAU {campaign.level}
             </span>
-            <h1 className="text-5xl md:text-7xl font-bold text-white drop-shadow-lg mb-2 tracking-wide">{campaign.title}</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white drop-shadow-lg mb-2 tracking-wide">{campaign.title}</h1>
           </div>
         </div>
 

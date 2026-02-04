@@ -31,32 +31,33 @@ export default function BestiaryPage() {
   );
 
   return (
-    <div className="p-8 max-w-7xl mx-auto min-h-screen bg-background text-[var(--text-main)]">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-[var(--border-main)] pb-6 gap-4">
-        <div>
-          <h1 className="text-4xl font-bold text-[var(--accent-primary)]">🐉 Bestiaire</h1>
-          <p className="text-[var(--text-muted)] mt-2">Base de données des créatures ({filtered.length})</p>
+    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
+      
+      {/* HEADER RESPONSIVE */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b border-[var(--border-main)] pb-6 gap-4">
+        <div className="w-full md:w-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--accent-primary)] font-serif">🐉 Bestiaire</h1>
+          <p className="text-[var(--text-muted)] mt-1 text-sm md:text-base">Base de données ({filtered.length})</p>
         </div>
         
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <input
             type="text"
             placeholder="Rechercher..."
-            className="theme-card border border-[var(--border-main)] text-white px-4 py-2 rounded-lg w-full md:w-64 focus:outline-none focus:border-accent transition"
+            className="theme-input w-full md:w-64"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          
-          <Link href="/bestiary/new" className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-bold shadow-lg transition whitespace-nowrap">
-            + Nouveau
+          <Link href="/bestiary/new" className="theme-btn-primary flex items-center justify-center gap-2 whitespace-nowrap">
+            <span>+</span> Nouveau
           </Link>
         </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-20 text-slate-500 animate-pulse">Chargement du grimoire...</div>
+        <div className="text-center py-20 text-[var(--text-muted)] animate-pulse">Chargement du grimoire...</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {filtered.map(monster => (
             <MonsterCard key={monster._id} monster={monster} />
           ))}
@@ -64,8 +65,8 @@ export default function BestiaryPage() {
       )}
       
       {!loading && filtered.length === 0 && (
-        <div className="text-center py-20 text-slate-500 border-2 border-dashed border-[var(--border-main)] rounded-xl">
-          Aucun monstre trouvé. Créez-en un !
+        <div className="text-center py-12 text-[var(--text-muted)] border-2 border-dashed border-[var(--border-main)] rounded-xl bg-[var(--bg-card)]/50">
+          Aucun monstre trouvé.
         </div>
       )}
     </div>

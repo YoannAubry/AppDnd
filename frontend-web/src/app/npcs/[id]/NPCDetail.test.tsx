@@ -16,6 +16,17 @@ vi.mock('@/lib/sanity', () => ({
   urlFor: () => ({ width: () => ({ url: () => 'https://fake-image.url' }) })
 }))
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    back: vi.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+  usePathname: () => '/',
+}))
+
 vi.mock('@/components/ui/AdminToolbar', () => ({
   AdminToolbar: () => <div>Toolbar Mock</div>
 }))

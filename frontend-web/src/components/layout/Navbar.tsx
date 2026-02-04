@@ -36,7 +36,7 @@ export function Navbar() {
           </div>
 
           {/* DESKTOP MENU */}
-          <div className="hidden md:flex gap-1 overflow-x-auto no-scrollbar">
+          <div className="hidden lg:flex gap-1 overflow-x-auto no-scrollbar">
             {NAV_LINKS.map((link) => (
               <Link 
                 key={link.href}
@@ -57,10 +57,12 @@ export function Navbar() {
           {/* DROITE : THEME & MOBILE TOGGLE */}
           <div className="flex items-center gap-3 shrink-0">
             
-            <ThemeSwitcher />
+            <div className="hidden md:block">
+              <ThemeSwitcher />
+            </div>
 
             {/* Burger Mobile */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <button 
                 onClick={() => setIsOpen(!isOpen)} 
                 className="text-[var(--text-main)] hover:text-[var(--accent-primary)] p-2 transition focus:outline-none"
@@ -80,7 +82,7 @@ export function Navbar() {
 
       {/* MOBILE MENU */}
       {isOpen && (
-        <div className="md:hidden border-t border-[var(--border-main)] bg-[var(--bg-card)] absolute w-full left-0 shadow-2xl animate-in slide-in-from-top-2">
+        <div className="lg:hidden border-t border-[var(--border-main)] bg-[var(--bg-main)] absolute top-16 left-0 w-full h-screen z-[100] shadow-2xl animate-in slide-in-from-top-2 overflow-y-auto">
           <div className="px-4 pt-2 pb-4 space-y-1">
             {NAV_LINKS.map((link) => (
               <Link 
@@ -98,6 +100,14 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            {/* SÉPARATEUR */}
+            <hr className="border-[var(--border-main)] my-2" />
+
+            {/* THEME SWITCHER MOBILE (Juste ici !) */}
+            <div className="py-2 flex justify-between items-center px-4">
+              <span className="text-sm text-[var(--text-muted)]">Thème</span>
+              <ThemeSwitcher />
+            </div>
           </div>
         </div>
       )}

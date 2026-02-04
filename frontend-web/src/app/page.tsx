@@ -22,13 +22,12 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-[var(--bg-main)] transition-colors duration-300">
       
-      {/* Background Decor (Caché en mode Papier pour éviter l'effet sale) */}
+      {/* Background Decor */}
       <div className="absolute top-[-20%] left-[-10%] w-96 h-96 bg-[var(--accent-primary)]/10 rounded-full blur-3xl pointer-events-none opacity-50 dark:opacity-100"></div>
 
-      <div className="max-w-5xl w-full z-10 space-y-12">
+      <div className="max-w-6xl w-full z-10 space-y-12">
         
         <div className="text-center space-y-4">
-          {/* Titre : On retire le gradient bg-clip-text qui est moche sur clair, on utilise la couleur accent */}
           <h1 className="text-5xl md:text-7xl font-bold font-serif text-[var(--accent-primary)] drop-shadow-sm">
             Cockpit MJ
           </h1>
@@ -37,13 +36,18 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <MenuCard href="/campaigns" title="Aventures" icon="📜" desc="Gérez vos scénarios." />
-          <MenuCard href="/tracker" title="Combat Tracker" icon="⚔️" desc="Gérez l'initiative." />
-          <MenuCard href="/bestiary" title="Bestiaire" icon="🐉" desc="Fiches de monstres." />
-          <MenuCard href="/players" title="Groupe" icon="🛡️" desc="Fiches personnages." />
+        {/* GRILLE (3 colonnes sur grand écran) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <MenuCard href="/campaigns" title="Aventures" icon="📜" desc="Gérez vos scénarios, actes et intrigues." />
+          <MenuCard href="/locations" title="Lieux" icon="🗺️" desc="Atlas du monde et points d'intérêt." />
+          <MenuCard href="/npcs" title="Personnages" icon="👤" desc="Contacts, alliés et rivaux." />
+          
+          <MenuCard href="/bestiary" title="Bestiaire" icon="🐉" desc="Base de données des créatures." />
+          <MenuCard href="/tracker" title="Combat Tracker" icon="⚔️" desc="Gérez l'initiative et les PV en temps réel." />
+          <MenuCard href="/players" title="Groupe" icon="🛡️" desc="Fiches personnages et inventaire." />
         </div>
 
+        {/* DÉ */}
         <div className="flex flex-col items-center justify-center pt-8">
           <button 
             onClick={rollD20}
@@ -65,13 +69,14 @@ export default function Home() {
 
 function MenuCard({ href, title, icon, desc }: any) {
   return (
-    <Link href={href} className="group block">
-      {/* Utilisation stricte des variables pour le fond et le texte */}
-      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] p-6 rounded-2xl h-full transition-all duration-300 hover:border-[var(--accent-primary)] hover:shadow-xl hover:-translate-y-1">
-        <div className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl mb-4 bg-[var(--bg-input)] border border-[var(--border-main)]">
-          {icon}
+    <Link href={href} className="group block h-full">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-main)] p-6 rounded-2xl h-full transition-all duration-300 hover:border-[var(--accent-primary)] hover:shadow-xl hover:-translate-y-1 flex flex-col">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl bg-[var(--bg-input)] border border-[var(--border-main)] shrink-0">
+            {icon}
+          </div>
+          <h2 className="text-xl font-bold text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition font-serif">{title}</h2>
         </div>
-        <h2 className="text-xl font-bold text-[var(--text-main)] mb-2 group-hover:text-[var(--accent-primary)] transition font-serif">{title}</h2>
         <p className="text-[var(--text-muted)] text-sm leading-relaxed font-sans">
           {desc}
         </p>
