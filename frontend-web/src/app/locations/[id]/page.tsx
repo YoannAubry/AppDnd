@@ -1,16 +1,9 @@
-import { client, urlFor } from "@/lib/sanity"
 import Link from "next/link"
 import { AdminToolbar } from "@/components/ui/adminToolbar"
 import { BackButton } from "@/components/ui/BackButton"
 import { PortableText } from "@portabletext/react"
+import { getLocation } from "@/app/actions/getters"
 
-async function getLocation(id: string) {
-  return await client.fetch(`*[_type == "location" && _id == $id][0]{
-    _id, name, image, description,
-    npcs[]->{ _id, name, role, image },
-    monsters[]->{ _id, name, image, "slug": slug.current, "cr": stats.challenge }
-  }`, { id })
-}
 
 export default async function LocationPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -31,7 +24,7 @@ export default async function LocationPage(props: { params: Promise<{ id: string
         {location.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img 
-            src={urlFor(location.image).width(1200).url()} 
+            src={location.image.width(1200).url()} 
             className="w-full h-full object-cover opacity-80" 
             alt={location.name}
           />
@@ -79,7 +72,7 @@ export default async function LocationPage(props: { params: Promise<{ id: string
                   <div className="w-10 h-10 rounded-full bg-[var(--bg-input)] overflow-hidden border border-[var(--border-main)] shrink-0">
                     {npc.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={urlFor(npc.image).width(50).url()} className="w-full h-full object-cover" />
+                        <img src={npc.image.width(50).url()} className="w-full h-full object-cover" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-lg">👤</div>
                     )}

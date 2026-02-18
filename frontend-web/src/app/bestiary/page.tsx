@@ -2,16 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from "next/link";
-import { client } from '../../lib/sanity';
 import { Monster } from '../../types';
 import { MonsterCard } from '../../components/bestiary/MonsterCard';
-
-async function getMonsters() {
-  return await client.fetch(`*[_type == "monster"] | order(name asc) {
-    _id, name, slug, image, type,
-    stats { ac, hp, challenge }
-  }`);
-}
+import { getMonsters } from '@/app/actions/getters'; 
 
 export default function BestiaryPage() {
   const [monsters, setMonsters] = useState<Monster[]>([]);
@@ -59,7 +52,7 @@ export default function BestiaryPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {filtered.map(monster => (
-            <MonsterCard key={monster._id} monster={monster} />
+            <MonsterCard key={monster.id} monster={monster} />
           ))}
         </div>
       )}

@@ -1,14 +1,10 @@
 "use client"
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { client, urlFor } from "../../lib/sanity"
+import { getCampaigns } from "@/app/actions/getters"
 import { Badge } from "../../components/ui/Badge"
 
-async function getCampaigns() {
-  return await client.fetch(`*[_type == "campaign"] | order(title asc) {
-    _id, title, "slug": slug.current, level, image, synopsis
-  }`)
-}
+
 
 export default function CampaignsPage() {
   const [campaigns, setCampaigns] = useState<any[]>([])
@@ -43,7 +39,7 @@ export default function CampaignsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {campaigns.map((camp: any) => (
-              <Link href={`/campaigns/${camp.slug}`} key={camp._id} className="group h-full block">
+              <Link href={`/campaigns/${camp.slug}`} key={camp.id} className="group h-full block">
                 
                 <div className="theme-card rounded-xl overflow-hidden shadow-lg h-full flex flex-col hover:-translate-y-1 transition-transform duration-300">
                   
@@ -52,7 +48,7 @@ export default function CampaignsPage() {
                     {camp.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img 
-                        src={urlFor(camp.image).width(600).height(400).url()} 
+                        src={camp.image} 
                         alt={camp.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition duration-700 opacity-90 group-hover:opacity-100"
                       />

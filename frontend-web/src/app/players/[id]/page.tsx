@@ -1,12 +1,7 @@
-import { client, urlFor } from "../../../lib/sanity"
 import Link from "next/link"
 import { AdminToolbar } from "../../../components/ui/adminToolbar"
+import { getPlayer } from "@/app/actions/getters"
 
-async function getPlayer(id: string) {
-  return await client.fetch(`*[_type == "player" && _id == $id][0]{
-    name, playerName, avatar, race, class, hpMax, ac, initBonus
-  }`, { id })
-}
 
 export default async function PlayerDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -28,7 +23,7 @@ export default async function PlayerDetailPage(props: { params: Promise<{ id: st
           <div className="w-32 h-32 rounded-full border-4 border-[var(--border-main)] overflow-hidden bg-slate-700">
             {player.avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={urlFor(player.avatar).width(400).url()} className="w-full h-full object-cover" />
+              <img src={player.avatar} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-4xl">👤</div>
             )}

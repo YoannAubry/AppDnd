@@ -1,51 +1,35 @@
 "use server"
 
-import { writeClient } from "@/lib/sanityWrite"
+import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { getString } from "@/lib/actions-utils"
+import { getString, parseJsonList } from "@/lib/actions-utils"
 
-function parseRefs(jsonString: string): any[] {
-  try {
-    if (!jsonString) return []
-    const ids = JSON.parse(jsonString)
-    if (!Array.isArray(ids)) return []
-    return ids.map((id: string) => ({
-      _key: id, // Important pour React et Sanity
-      _type: 'reference',
-      _ref: id
-    }))
-  } catch (e) {
-    console.warn("Erreur parsing refs:", e)
-    return []
-  }
+// Helper pour parser les listes d'IDs
+function parseIds(json: string) {
+  const ids = parseJsonList(json) as string[] // ["id1", "id2"]
+  return ids.map(id => ({ id })) // [{id: "id1"}, {id: "id2"}]
 }
 
 // --- CRÉATION ---
 export async function createLocationAction(formData: FormData) {
   const name = getString(formData, "name")
-  const descriptionText = getString(formData, "description")
+  const description = getString(formData, "description")
   
-  // Transformation Texte -> Bloc
-  const description = descriptionText ? [
-    {
-      _type: 'block',
-      _key: Math.random().toString(36).substring(7),
-      style: 'normal',
-      children: [{ _type: 'span', text: descriptionText }]
-    }
-  ] : []
-
-  const npcs = parseRefs(getString(formData, "npcs"))
-  const monsters = parseRefs(getString(formData, "monsters"))
+  // Note: On stocke la description en string simple maintenant pour SQLite (plus de PortableText complexe ici pour simplifier)
+  // Ou on l'enrobe en JSON si on veut garder la structure block, mais restons simple : string brute.
+  
+  const npcIds = parseIds(getString(formData, "npcs"))
+  const monsterIds = parseIds(getString(formData, "monsters"))
 
   try {
-    await writeClient.create({
-      _type: "location",
-      name,
-      description,
-      npcs,
-      monsters
+    await prisma.location.create({
+      data: {
+        name,
+        description: JSON.stringify([{ children: [{ text: description }] }]), // Hack compatible PortableText basique
+        npcs: { connect: npcIds },
+        monsters: { connect: monsterIds }
+      }
     })
   } catch (error) {
     console.error("Erreur création:", error)
@@ -56,35 +40,28 @@ export async function createLocationAction(formData: FormData) {
   redirect("/locations")
 }
 
-// --- MISE À JOUR ---
+// --- UPDATE ---
 export async function updateLocationAction(id: string, formData: FormData) {
   const name = getString(formData, "name")
-  const descriptionText = getString(formData, "description")
-  
-  // Note: Si descriptionText est vide, on pourrait vouloir GARDER l'ancienne description riche
-  // Pour l'instant, on écrase tout (MVP). Pour faire mieux, il faudrait vérifier si le champ a changé.
-  const description = descriptionText ? [
-    {
-      _type: 'block',
-      _key: Math.random().toString(36).substring(7),
-      style: 'normal',
-      children: [{ _type: 'span', text: descriptionText }]
-    }
-  ] : []
+  const description = getString(formData, "description")
 
-  const npcs = parseRefs(getString(formData, "npcs"))
-  const monsters = parseRefs(getString(formData, "monsters"))
+  const npcIds = parseIds(getString(formData, "npcs"))
+  const monsterIds = parseIds(getString(formData, "monsters"))
 
   try {
-    await writeClient.patch(id).set({
-      name,
-      description,
-      npcs,
-      monsters
-    }).commit()
+    // Pour update des relations Many-to-Many en Prisma, on fait souvent 'set' pour remplacer la liste
+    await prisma.location.update({
+      where: { id },
+      data: {
+        name,
+        description: JSON.stringify([{ children: [{ text: description }] }]),
+        npcs: { set: npcIds },      // Remplace toute la liste
+        monsters: { set: monsterIds } // Remplace toute la liste
+      }
+    })
   } catch (error) {
     console.error("Erreur update:", error)
-    throw new Error("Impossible de modifier le lieu")
+    throw new Error("Impossible de modifier")
   }
 
   revalidatePath("/locations")
@@ -92,14 +69,9 @@ export async function updateLocationAction(id: string, formData: FormData) {
   redirect(`/locations/${id}`)
 }
 
-// --- SUPPRESSION ---
+// --- DELETE ---
 export async function deleteLocationAction(id: string) {
-  try {
-    await writeClient.delete(id)
-  } catch (err) {
-    console.error("Erreur suppression:", err)
-    throw new Error("Erreur suppression")
-  }
+  await prisma.location.delete({ where: { id } })
   revalidatePath("/locations")
   redirect("/locations")
 }

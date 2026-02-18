@@ -1,28 +1,25 @@
 "use server"
 
-import { writeClient } from "@/lib/sanityWrite"
+import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { getNumber, getString } from "@/lib/actions-utils"
 
 // --- CREATE ---
 export async function createPlayerAction(formData: FormData) {
-  const name = formData.get("name") as string
-  const playerName = formData.get("playerName") as string
-  const race = formData.get("race") as string
-  const classe = formData.get("class") as string // 'class' est un mot réservé
-  const level = Number(formData.get("level"))
-  
-  const hpMax = Number(formData.get("hpMax"))
-  const ac = Number(formData.get("ac"))
-  const initBonus = Number(formData.get("initBonus"))
-
   try {
-    await writeClient.create({
-      _type: "player",
-      name, playerName, race, class: classe, level,
-      hpMax, ac, initBonus
+    await prisma.player.create({
+      data: {
+        name: getString(formData, "name"),
+        playerName: getString(formData, "playerName"),
+        race: getString(formData, "race"),
+        class: getString(formData, "class"),
+        level: getNumber(formData, "level", 1),
+        hpMax: getNumber(formData, "hpMax", 10),
+        ac: getNumber(formData, "ac", 10),
+        initBonus: getNumber(formData, "initBonus", 0)
+      }
     })
-    console.log(`✅ Joueur créé : ${name}`)
   } catch (error) {
     console.error("Erreur création:", error)
     throw new Error("Impossible de créer le joueur")
@@ -34,21 +31,20 @@ export async function createPlayerAction(formData: FormData) {
 
 // --- UPDATE ---
 export async function updatePlayerAction(id: string, formData: FormData) {
-  const name = formData.get("name") as string
-  const playerName = formData.get("playerName") as string
-  const race = formData.get("race") as string
-  const classe = formData.get("class") as string
-  const level = Number(formData.get("level"))
-  
-  const hpMax = Number(formData.get("hpMax"))
-  const ac = Number(formData.get("ac"))
-  const initBonus = Number(formData.get("initBonus"))
-
   try {
-    await writeClient.patch(id).set({
-      name, playerName, race, class: classe, level,
-      hpMax, ac, initBonus
-    }).commit()
+    await prisma.player.update({
+      where: { id },
+      data: {
+        name: getString(formData, "name"),
+        playerName: getString(formData, "playerName"),
+        race: getString(formData, "race"),
+        class: getString(formData, "class"),
+        level: getNumber(formData, "level"),
+        hpMax: getNumber(formData, "hpMax"),
+        ac: getNumber(formData, "ac"),
+        initBonus: getNumber(formData, "initBonus")
+      }
+    })
   } catch (error) {
     console.error("Erreur update:", error)
     throw new Error("Impossible de modifier")
@@ -61,7 +57,7 @@ export async function updatePlayerAction(id: string, formData: FormData) {
 
 // --- DELETE ---
 export async function deletePlayerAction(id: string) {
-  await writeClient.delete(id)
+  await prisma.player.delete({ where: { id } })
   revalidatePath("/players")
   redirect("/players")
 }

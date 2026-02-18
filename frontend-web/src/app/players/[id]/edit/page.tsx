@@ -1,9 +1,9 @@
-import { client } from "@/lib/sanity"
 import EditPlayerForm from "./EditPlayerForm"
+import { getPlayer } from "@/app/actions/getters"
 
 export default async function EditPlayerPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const player = await client.fetch(`*[_type == "player" && _id == $id][0]`, { id: params.id })
+  const player = await getPlayer(params.id )
 
   if (!player) return <div>Joueur introuvable</div>
 

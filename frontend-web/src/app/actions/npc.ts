@@ -1,6 +1,6 @@
 "use server"
 
-import { writeClient } from "@/lib/sanityWrite"
+import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { getNumber, getString, parseJsonList } from "@/lib/actions-utils"
@@ -22,24 +22,25 @@ export async function createNPCAction(formData: FormData) {
   const spells = parseJsonList(formData.get("spells"))
 
   try {
-    const doc: any = {
-      _type: "npc",
+    const data: any = {
       name,
       role,
       personality,
       history,
       combatType,
-      inventory,
-      spells
+      inventory: JSON.stringify(inventory),
+      spells: JSON.stringify(spells),
     }
 
     if (combatType === 'template' && monsterTemplateId) {
-      doc.monsterTemplate = { _type: 'reference', _ref: monsterTemplateId }
+      data.monsterTemplate = { connect: { id: monsterTemplateId } }
     } else if (combatType === 'custom') {
-      doc.customStats = { hp, ac }
+      data.customStats = JSON.stringify({ hp, ac })
     }
 
-    await writeClient.create(doc)
+    await prisma.nPC.create({ data })
+    console.log(`✅ PNJ créé : ${name}`)
+
   } catch (error) {
     console.error("Erreur création PNJ:", error)
     throw new Error("Impossible de créer le PNJ")
@@ -66,23 +67,26 @@ export async function updateNPCAction(id: string, formData: FormData) {
   const spells = parseJsonList(formData.get("spells"))
 
   try {
-    const patch: any = {
+    const data: any = {
       name, role, personality, history, combatType,
-      inventory, spells
+      inventory: JSON.stringify(inventory),
+      spells: JSON.stringify(spells)
     }
 
     if (combatType === 'template') {
-      patch.monsterTemplate = monsterTemplateId ? { _type: 'reference', _ref: monsterTemplateId } : undefined
-      patch.customStats = undefined 
+      data.monsterTemplate = monsterTemplateId ? { connect: { id: monsterTemplateId } } : { disconnect: true }
+      data.customStats = null
     } else if (combatType === 'custom') {
-      patch.customStats = { hp, ac }
-      patch.monsterTemplate = undefined
+      data.customStats = JSON.stringify({ hp, ac })
+      data.monsterTemplate = { disconnect: true }
     } else {
-      patch.monsterTemplate = undefined
-      patch.customStats = undefined
+      data.monsterTemplate = { disconnect: true }
+      data.customStats = null
     }
 
-    await writeClient.patch(id).set(patch).commit()
+    await prisma.nPC.update({ where: { id }, data })
+    console.log(`✅ PNJ ${name} mis à jour.`)
+
   } catch (error) {
     console.error("Erreur update PNJ:", error)
     throw new Error("Impossible de modifier le PNJ")
@@ -96,7 +100,7 @@ export async function updateNPCAction(id: string, formData: FormData) {
 // --- SUPPRESSION ---
 export async function deleteNPCAction(id: string) {
   try {
-    await writeClient.delete(id)
+    await prisma.nPC.delete({ where: { id } })
   } catch (err) {
     console.error("Erreur suppression:", err)
     throw new Error("Erreur suppression")

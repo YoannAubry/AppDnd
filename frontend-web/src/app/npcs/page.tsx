@@ -1,13 +1,9 @@
 "use client"
 import { useState, useEffect } from "react"
-import { client, urlFor } from "@/lib/sanity"
 import Link from "next/link"
+import { getNPCs } from "@/app/actions/getters" // <-- Importe ça
 
-async function getNPCs() {
-  return await client.fetch(`*[_type == "npc"] | order(name asc) {
-    _id, name, role, image, faction->{name}
-  }`)
-}
+
 
 export default function NPCsPage() {
   const [npcs, setNpcs] = useState<any[]>([])
@@ -51,13 +47,13 @@ export default function NPCsPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {filtered.map((npc: any) => (
-            <Link href={`/npcs/${npc._id}`} key={npc._id} className="block group h-full">
+            <Link href={`/npcs/${npc.id}`} key={npc.id} className="block group h-full">
               <div className="theme-card rounded-xl p-4 flex items-center gap-4 hover:border-[var(--accent-primary)] transition cursor-pointer h-full">
                 
                 <div className="w-16 h-16 rounded-full bg-[var(--bg-input)] overflow-hidden border border-[var(--border-main)] shrink-0">
                   {npc.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={urlFor(npc.image).width(200).url()} className="w-full h-full object-cover" />
+                    <img src={npc.image} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-2xl opacity-50">👤</div>
                   )}
@@ -66,7 +62,6 @@ export default function NPCsPage() {
                 <div className="min-w-0">
                   <h3 className="text-lg font-bold text-[var(--text-main)] group-hover:text-[var(--accent-primary)] transition truncate">{npc.name}</h3>
                   <p className="text-sm text-[var(--text-muted)] truncate">{npc.role}</p>
-                  {npc.faction && <span className="text-xs text-[var(--accent-hover)] font-medium uppercase tracking-wide">{npc.faction.name}</span>}
                 </div>
 
               </div>

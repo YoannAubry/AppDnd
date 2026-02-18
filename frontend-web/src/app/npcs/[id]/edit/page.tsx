@@ -1,14 +1,14 @@
-import { client } from "../../../../lib/sanity"
 import EditNPCForm from "./EditNPCForm"
+import { getNPC, getMonster } from "@/app/actions/getters"
 
 export default async function EditNPCPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   
   // 1. Récupérer le PNJ
-  const npcPromise = client.fetch(`*[_type == "npc" && _id == $id][0]`, { id: params.id })
+  const npcPromise = getNPC(params.id )
   
   // 2. Récupérer la liste des monstres (juste ID et Nom) pour le menu déroulant
-  const monstersPromise = client.fetch(`*[_type == "monster"] | order(name asc) {_id, name}`)
+  const monstersPromise = getMonster(`*[_type == "monster"] | order(name asc) {_id, name}`)
 
   // On attend les deux
   const [npc, monsters] = await Promise.all([npcPromise, monstersPromise])

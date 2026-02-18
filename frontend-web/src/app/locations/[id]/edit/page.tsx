@@ -1,4 +1,4 @@
-import { client } from "../../../../lib/sanity"
+import { getMonster, getLocation, getNPC } from "@/app/actions/getters"
 import EditLocationForm from "./EditLocationForm"
 
 export default async function EditLocationPage(props: { params: Promise<{ id: string }> }) {
@@ -6,9 +6,9 @@ export default async function EditLocationPage(props: { params: Promise<{ id: st
   
   // Parallélisation des requêtes
   const [location, allNpcs, allMonsters] = await Promise.all([
-    client.fetch(`*[_type == "location" && _id == $id][0]`, { id: params.id }),
-    client.fetch(`*[_type == "npc"] | order(name asc) { _id, name }`),
-    client.fetch(`*[_type == "monster"] | order(name asc) { _id, name }`)
+    getLocation(params.id),
+    getNPC(`*[_type == "npc"] | order(name asc) { _id, name }`),
+    getMonster(`*[_type == "monster"] | order(name asc) { _id, name }`)
   ])
 
   if (!location) return <div>Introuvable</div>

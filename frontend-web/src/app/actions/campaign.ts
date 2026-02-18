@@ -1,49 +1,33 @@
 "use server"
 
-import { writeClient } from "@/lib/sanityWrite"
+import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { generateSlug, getString } from "@/lib/actions-utils"
-
-function parseActs(jsonString: string): any[] {
-  try {
-    if (!jsonString) return []
-    const acts = JSON.parse(jsonString)
-    if (!Array.isArray(acts)) return []
-    
-    return acts.map((act: any) => ({
-      _key: act.id || act._key || Math.random().toString(36).substring(7),
-      title: act.title || "Sans titre",
-      summary: act.summary || "",
-      locations: Array.isArray(act.locationIds) ? act.locationIds.map((id: string) => ({
-        _key: Math.random().toString(36).substring(7),
-        _type: 'reference',
-        _ref: id
-      })) : []
-    }))
-  } catch (e) {
-    console.warn("Erreur parsing Acts:", e)
-    return []
-  }
-}
+import { generateSlug, getString, parseJsonList } from "@/lib/actions-utils"
 
 // --- CRÉATION ---
 export async function createCampaignAction(formData: FormData) {
   const title = getString(formData, "title")
-  const level = getString(formData, "level")
-  const synopsis = getString(formData, "synopsis")
-  
-  const acts = parseActs(getString(formData, "acts"))
-  const slug = generateSlug(title)
+  const actsData = parseJsonList(formData.get("acts")) as any[]
 
   try {
-    await writeClient.create({
-      _type: "campaign",
-      title,
-      slug: { _type: 'slug', current: slug },
-      level,
-      synopsis,
-      acts
+    await prisma.campaign.create({
+      data: {
+        title,
+        slug: generateSlug(title),
+        level: getString(formData, "level"),
+        synopsis: getString(formData, "synopsis"),
+        acts: {
+          create: actsData.map((act, i) => ({
+            title: act.title,
+            summary: act.summary,
+            order: i,
+            locations: {
+              connect: (act.locationIds || []).map((id: string) => ({ id }))
+            }
+          }))
+        }
+      }
     })
   } catch (error) {
     console.error("Erreur création:", error)
@@ -51,39 +35,53 @@ export async function createCampaignAction(formData: FormData) {
   }
 
   revalidatePath("/campaigns")
-  redirect(`/campaigns/${slug}`)
+  redirect("/campaigns")
 }
 
-// --- MISE À JOUR ---
+// --- UPDATE ---
 export async function updateCampaignAction(id: string, formData: FormData) {
-  const title = getString(formData, "title")
-  const level = getString(formData, "level")
-  const synopsis = getString(formData, "synopsis")
-  
-  const acts = parseActs(getString(formData, "acts"))
+  const actsData = parseJsonList(formData.get("acts")) as any[]
 
   try {
-    await writeClient.patch(id).set({
-      title, level, synopsis, acts
-    }).commit()
+    // Stratégie brutale mais efficace pour les nested relations en update :
+    // 1. Supprimer tous les anciens actes
+    // 2. Recréer les nouveaux
+    // (Prisma n'aime pas trop l'update profond de listes imbriquées complexes)
+    
+    await prisma.$transaction([
+      prisma.act.deleteMany({ where: { campaignId: id } }),
+      prisma.campaign.update({
+        where: { id },
+        data: {
+          title: getString(formData, "title"),
+          level: getString(formData, "level"),
+          synopsis: getString(formData, "synopsis"),
+          acts: {
+            create: actsData.map((act, i) => ({
+              title: act.title,
+              summary: act.summary,
+              order: i,
+              locations: {
+                connect: (act.locationIds || []).map((locId: string) => ({ id: locId }))
+              }
+            }))
+          }
+        }
+      })
+    ])
+    
   } catch (error) {
     console.error("Erreur update:", error)
     throw new Error("Impossible de modifier")
   }
 
   revalidatePath("/campaigns")
-  // Idéalement on redirige vers le slug, mais ici on va vers la liste pour simplifier
   redirect("/campaigns")
 }
 
-// --- SUPPRESSION ---
+// --- DELETE ---
 export async function deleteCampaignAction(id: string) {
-  try {
-    await writeClient.delete(id)
-  } catch (err) {
-    console.error("Erreur suppression:", err)
-    throw new Error("Erreur suppression")
-  }
+  await prisma.campaign.delete({ where: { id } })
   revalidatePath("/campaigns")
   redirect("/campaigns")
 }

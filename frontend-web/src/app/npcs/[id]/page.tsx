@@ -1,18 +1,9 @@
-import { client, urlFor } from "@/lib/sanity"
 import Link from "next/link"
 import { AdminToolbar } from "@/components/ui/adminToolbar"
 import { BackButton } from "@/components/ui/BackButton"
+import { getNPC } from "@/app/actions/getters"
 
-async function getNPC(id: string) {
-  return await client.fetch(`*[_type == "npc" && _id == $id][0]{
-    _id, name, role, personality, history, image,
-    faction->{name, description, image},
-    monsterTemplate->{name, "slug": slug.current},
-    customStats,
-    inventory, 
-    spells
-  }`, { id })
-}
+
 
 export default async function NPCDetailPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -28,7 +19,7 @@ export default async function NPCDetailPage(props: { params: Promise<{ id: strin
         <div className="relative h-48 md:h-64 bg-[var(--bg-input)]">
           {npc.image ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={urlFor(npc.image).width(800).url()} className="w-full h-full object-cover opacity-80" />
+            <img src={npc.image} className="w-full h-full object-cover opacity-80" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-6xl opacity-50">👤</div>
           )}
@@ -53,15 +44,6 @@ export default async function NPCDetailPage(props: { params: Promise<{ id: strin
               <p className="text-[var(--text-muted)] italic text-base md:text-lg">{npc.role}</p>
             </div>
             
-            {npc.faction && (
-              <div className="flex items-center gap-2 bg-[var(--bg-input)] px-3 py-1.5 rounded-full border border-[var(--border-main)] shadow-sm self-start md:self-auto">
-                {npc.faction.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={urlFor(npc.faction.image).width(30).url()} className="w-6 h-6 rounded-full" alt={npc.faction.name}/>
-                )}
-                <span className="text-xs font-bold text-[var(--text-main)] uppercase tracking-wider">{npc.faction.name}</span>
-              </div>
-            )}
           </div>
 
           {/* GRILLE D'INFOS */}
@@ -117,7 +99,7 @@ export default async function NPCDetailPage(props: { params: Promise<{ id: strin
               {/* Lien Combat */}
               {npc.monsterTemplate && (
                 <div className="mt-8 pt-4 border-t border-[var(--border-main)]">
-                  <Link href={`/bestiary/${npc.monsterTemplate.slug}`} className="bg-[var(--bg-input)] border border-[var(--border-accent)] px-4 py-3 rounded-lg flex justify-between items-center hover:bg-[var(--accent-primary)] hover:text-[var(--accent-text)] transition group shadow-sm">
+                  <Link href={`/bestiary/${npc.monsterTemplate.slug.current}`} className="bg-[var(--bg-input)] border border-[var(--border-accent)] px-4 py-3 rounded-lg flex justify-between items-center hover:bg-[var(--accent-primary)] hover:text-[var(--accent-text)] transition group shadow-sm">
                     <div>
                       <span className="text-[10px] font-bold uppercase block mb-1 opacity-70">Fiche Technique</span>
                       <span className="font-bold font-serif text-lg group-hover:underline">{npc.monsterTemplate.name}</span>

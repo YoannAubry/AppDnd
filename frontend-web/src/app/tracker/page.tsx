@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { client, urlFor } from "@/lib/sanity"
 import { Card } from "@/components/ui/Card"
 import { Badge } from "@/components/ui/Badge"
 import { StatusList } from "@/components/tracker/StatusIcon"
@@ -10,6 +9,8 @@ import { useCombatTracker } from "@/hooks/useCombatTracker"
 import { Modal } from "@/components/ui/Modal"
 import { StatBlock } from "@/components/ui/StatBlock"
 import { calculateDamage, calculateHeal, sortCombatants, calculateNextTurn } from "@/lib/combat"
+import { searchEntities, getEntityById } from "@/app/actions/getters"
+
 
 type Combatant = {
   id: string
@@ -120,14 +121,8 @@ export default function TrackerPage() {
     if (searchQuery.length < 2) { setSearchResults([]); return }
     const timer = setTimeout(async () => {
       setIsSearching(true)
-      const results = await client.fetch(`
-        *[_type in ["monster", "player", "npc"] && name match $q + "*"][0...10]{
-          _id, _type, name, image,
-          stats { hp, ac, attributes },
-          hpMax, ac, initBonus,
-          combatType, customStats { hp, ac }, monsterTemplate->{ stats { hp, ac, attributes } }
-        }
-      `, { q: searchQuery })
+      // Appel à l'action serveur
+      const results = await searchEntities(searchQuery)
       setSearchResults(results)
       setIsSearching(false)
     }, 300)
@@ -137,11 +132,7 @@ export default function TrackerPage() {
   const openFighterDetails = async (fighter: Combatant) => {
     if (!fighter.sanityId) return;
     setSelectedFighter({ loading: true, name: fighter.name });
-    const fullData = await client.fetch(`*[_id == $id][0]{
-      ..., inventory[]->{ name, type, isMagic, rarity, description },
-      spells[]->{ name, level, school, description },
-      monsterTemplate->{ ..., stats }
-    }`, { id: fighter.sanityId });
+    const fullData = await getEntityById(fighter.sanityId, fighter.type);
     setSelectedFighter(fullData);
   }
 
@@ -328,7 +319,7 @@ export default function TrackerPage() {
               className="flex items-center gap-3 p-2 hover:bg-[var(--bg-input)] rounded cursor-pointer border border-transparent hover:border-[var(--border-main)] transition group"
             >
               <div className="w-8 h-8 bg-[var(--bg-input)] rounded-full flex items-center justify-center text-lg overflow-hidden shrink-0 border border-[var(--border-main)]">
-                {result.image ? <img src={urlFor(result.image).width(50).url()} className="w-full h-full object-cover"/> : (result._type === 'player' ? '🛡️' : result._type === 'npc' ? '👤' : '👾')}
+                {result.image ? <img src={result.image} className="w-full h-full object-cover"/> : (result._type === 'player' ? '🛡️' : result._type === 'npc' ? '👤' : '👾')}
               </div>
               <div className="min-w-0">
                 <div className="font-bold text-sm truncate group-hover:text-[var(--accent-primary)] transition">{result.name}</div>

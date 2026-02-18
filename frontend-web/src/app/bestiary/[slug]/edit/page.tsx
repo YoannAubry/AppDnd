@@ -1,11 +1,11 @@
-import { client } from "../../../../lib/sanity"
 import { updateMonsterAction } from "../../../../app/actions/bestiary" // Vérifie ton import
 import EditMonsterForm from "./EditMonsterForm" // On va créer ce composant client séparé
+import { getMonster } from "@/app/actions/getters"
 
 // Server Component pour fetcher les données
 export default async function EditPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const monster = await client.fetch(`*[_type == "monster" && slug.current == $slug][0]`, { slug: params.slug })
+  const monster = await getMonster(params.slug)
 
   if (!monster) return <div>Monstre introuvable</div>
 

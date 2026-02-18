@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { client, urlFor } from "@/lib/sanity"
+import { getLocations } from "@/app/actions/getters"
 
 interface LocationListItem {
   _id: string
@@ -12,13 +12,6 @@ interface LocationListItem {
   monsterCount: number
 }
 
-async function getLocations() {
-  return await client.fetch(`*[_type == "location"] | order(name asc) {
-    _id, name, image,
-    "npcCount": count(npcs),
-    "monsterCount": count(monsters)
-  }`)
-}
 
 export default function LocationsPage() {
   const [locations, setLocations] = useState<LocationListItem[]>([])
@@ -79,7 +72,7 @@ export default function LocationsPage() {
                   {loc.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img 
-                      src={urlFor(loc.image).width(400).url()} 
+                      src={loc.image} 
                       alt={loc.name}
                       className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition duration-500" 
                     />

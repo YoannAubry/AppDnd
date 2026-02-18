@@ -2,7 +2,6 @@
 import { useState } from "react"
 import Link from "next/link"
 import { PortableText } from "@portabletext/react"
-import { urlFor } from "@/lib/sanity"
 
 export function ActView({ act, index }: { act: any, index: number }) {
   const [isOpen, setIsOpen] = useState(index === 0)
@@ -63,7 +62,7 @@ export function ActView({ act, index }: { act: any, index: number }) {
                       {loc.npcs.map((npc: any, k: number) => (
                         <Link href={`/npcs/${npc._id}`} key={k} className="flex items-center gap-2 group cursor-pointer hover:bg-[var(--bg-card)] p-1 rounded transition">
                            <div className="w-8 h-8 rounded-full bg-[var(--bg-card)] overflow-hidden border border-[var(--border-main)] shrink-0">
-                            {npc.image ? <img src={urlFor(npc.image).width(40).url()} className="w-full h-full object-cover"/> : <span className="flex items-center justify-center h-full text-xs">👤</span>}
+                            {npc.image ? <img src={npc.image} className="w-full h-full object-cover"/> : <span className="flex items-center justify-center h-full text-xs">👤</span>}
                           </div>
                           <div>
                             <span className="font-bold text-[var(--text-main)] block leading-tight text-sm group-hover:text-[var(--accent-primary)] transition">{npc.name}</span>
@@ -81,7 +80,9 @@ export function ActView({ act, index }: { act: any, index: number }) {
                     <span className="text-xs font-bold text-red-400 uppercase tracking-wide block mb-2 font-sans">Menaces</span>
                     <div className="flex flex-wrap gap-2">
                       {loc.monsters.map((monster: any, m: number) => (
-                        <Link href={`/bestiary/${monster.slug}`} key={m} className="bg-[var(--bg-card)] hover:bg-red-900/20 text-red-400 px-3 py-1 rounded border border-red-900/30 transition text-xs font-bold flex items-center gap-2 shadow-sm">
+                        <Link href={`/bestiary/${typeof monster.slug === 'string' ? monster.slug : monster.slug?.current}`} 
+                              key={monster._id || monster.id} 
+                              className="bg-[var(--bg-card)] hover:bg-red-900/20 text-red-400 px-3 py-1 rounded border border-red-900/30 transition text-xs font-bold flex items-center gap-2 shadow-sm">
                           ⚔️ {monster.name}
                           {monster.cr && <span className="text-[10px] opacity-60 font-normal">CR {monster.cr}</span>}
                         </Link>

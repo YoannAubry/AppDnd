@@ -1,0 +1,131 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL") 
+}
+
+// ---------------------------------------------------------
+// 1. BESTIAIRE (Monstres)
+// ---------------------------------------------------------
+model Monster {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  name      String
+  type      String
+  image     String?  // URL de l'image (stockée en local ou S3)
+  
+  // Stats de base
+  ac        Int
+  hp        String   // String car "22 (5d8 + 2)"
+  speed     String
+  challenge String?
+  
+  // Détails
+  senses    String?
+  languages String?
+  alignment String?
+
+  // Attributs (Stockés en JSON car structure fixe)
+  attributes String? // { str: 10, dex: 12 ... }
+
+  // Listes (Stockées en JSON car structure variable)
+  traits    String? // [{ name: "...", desc: "..." }]
+  actions   String? // [{ name: "...", desc: "..." }]
+
+  // Relations inverses (pour savoir où est utilisé ce monstre)
+  locations   Location[]  @relation("LocationMonsters")
+  npcTemplates NPC[]
+}
+
+// ---------------------------------------------------------
+// 2. PNJ (Personnages Non-Joueurs)
+// ---------------------------------------------------------
+model NPC {
+  id          String   @id @default(uuid())
+  name        String
+  role        String?
+  image       String?
+  personality String?
+  history     String?
+
+  // Inventaire & Sorts (Listes simples en JSON)
+  inventory   String? // [{ name: "...", desc: "..." }]
+  spells      String? // ["Boule de feu", "Lumière"]
+
+  // Gestion Combat
+  combatType  String   @default("none") // "none", "template", "custom"
+  
+  // Si Custom Stats
+  customStats String?    // { hp: "10", ac: 12 ... }
+
+  // Si Template (Relation vers Monstre)
+  monsterId   String?
+  monsterTemplate Monster? @relation(fields: [monsterId], references: [id])
+
+  // Relations
+  locations   Location[] @relation("LocationNPCs")
+}
+
+// ---------------------------------------------------------
+// 3. LIEUX (Locations)
+// ---------------------------------------------------------
+model Location {
+  id          String   @id @default(uuid())
+  name        String
+  image       String?
+  description String?  // Texte riche ou brut (Markdown/HTML)
+
+  // Relations (Many-to-Many implicite géré par Prisma)
+  npcs        NPC[]     @relation("LocationNPCs")
+  monsters    Monster[] @relation("LocationMonsters")
+  
+  acts        Act[]     @relation("ActLocations")
+}
+
+// ---------------------------------------------------------
+// 4. CAMPAGNES & ACTES
+// ---------------------------------------------------------
+model Campaign {
+  id       String  @id @default(uuid())
+  slug     String  @unique
+  title    String
+  level    String?
+  image    String?
+  synopsis String?
+
+  acts     Act[]
+}
+
+model Act {
+  id         String   @id @default(uuid())
+  title      String
+  summary    String?
+  order      Int      @default(0) // Pour le tri des actes
+
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  locations  Location[] @relation("ActLocations")
+}
+
+// ---------------------------------------------------------
+// 5. JOUEURS
+// ---------------------------------------------------------
+model Player {
+  id          String  @id @default(uuid())
+  name        String
+  playerName  String?
+  avatar      String?
+  race        String?
+  class       String?
+  level       Int     @default(1)
+  
+  hpMax       Int     @default(10)
+  ac          Int     @default(10)
+  initBonus   Int     @default(0)
+}

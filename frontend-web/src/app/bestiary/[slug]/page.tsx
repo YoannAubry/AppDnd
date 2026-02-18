@@ -1,7 +1,7 @@
-import { client, urlFor } from "@/lib/sanity"
 import { AdminToolbar } from "@/components/ui/adminToolbar"
 import { BackButton } from "@/components/ui/BackButton"
 import Link from "next/link"
+import { getMonster } from "@/app/actions/getters"
 
 interface Monster {
   _id: string;
@@ -21,10 +21,6 @@ interface Monster {
     traits?: { name: string; desc: string }[];
     actions?: { name: string; desc: string }[];
   };
-}
-
-async function getMonster(slug: string) {
-  return await client.fetch(`*[_type == "monster" && slug.current == $slug][0]`, { slug })
 }
 
 export default async function MonsterDetailPage(props: { params: Promise<{ slug: string }> }) {
@@ -107,7 +103,7 @@ export default async function MonsterDetailPage(props: { params: Promise<{ slug:
               <div className="mb-8 rounded-lg overflow-hidden border border-[var(--border-accent)] shadow-md bg-black relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
-                  src={urlFor(monster.image).width(600).url()} 
+                  src={monster.image as string}
                   alt={monster.name} 
                   className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition"
                 />

@@ -1,13 +1,8 @@
 "use client"
 import { useState, useEffect } from "react"
-import { client, urlFor } from "@/lib/sanity"
 import Link from "next/link"
+import { getPlayers } from "@/app/actions/getters"
 
-async function getPlayers() {
-  return await client.fetch(`*[_type == "player"] | order(name asc) {
-    _id, name, playerName, avatar, race, class, hpMax, ac
-  }`)
-}
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<any[]>([])
@@ -48,7 +43,7 @@ export default function PlayersPage() {
                 <div className="w-16 h-16 rounded-full border-2 border-[var(--border-main)] overflow-hidden shrink-0 bg-[var(--bg-input)]">
                   {p.avatar ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={urlFor(p.avatar).width(200).url()} className="w-full h-full object-cover" />
+                    <img src={p.avatar} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-2xl opacity-50">👤</div>
                   )}

@@ -1,23 +1,9 @@
-import { client, urlFor } from "@/lib/sanity"
 import Link from "next/link"
 import { ActView } from "@/components/campaign/ActView"
 import { AdminToolbar } from "@/components/ui/adminToolbar"
+import { getCampaign } from "@/app/actions/getters"
 
-async function getCampaign(slug: string) {
-  return await client.fetch(`
-    *[_type == "campaign" && slug.current == $slug][0]{
-      _id, title, level, synopsis, image,
-      acts[]{
-        _key, title, summary,
-        locations[]->{
-          _id, name, image, description,
-          npcs[]->{ _id, name, role, image, faction->{name} },
-          monsters[]->{ _id, name, image, "slug": slug.current, "cr": stats.challenge }
-        }
-      }
-    }
-  `, { slug })
-}
+
 
 export default async function CampaignDetailPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
@@ -38,7 +24,7 @@ export default async function CampaignDetailPage(props: { params: Promise<{ slug
         {campaign.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img 
-            src={urlFor(campaign.image).width(1200).url()} 
+            src={campaign.image.width(1200).url()} 
             className="w-full h-full object-cover opacity-60"
             alt="Cover"
           />
