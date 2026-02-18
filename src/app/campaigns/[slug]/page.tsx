@@ -24,7 +24,7 @@ export default async function CampaignDetailPage(props: { params: Promise<{ slug
         {campaign.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img 
-            src={campaign.image.width(1200).url()} 
+            src={campaign.image} 
             className="w-full h-full object-cover opacity-60"
             alt="Cover"
           />
