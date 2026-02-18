@@ -17,8 +17,7 @@ export default function LoginPage() {
     })
 
     if (res.ok) {
-      router.push("/") // Redirection vers l'accueil
-      router.refresh()
+       window.location.href = "/" 
     } else {
       setError("Mot de passe incorrect 🧙‍♂️")
     }
