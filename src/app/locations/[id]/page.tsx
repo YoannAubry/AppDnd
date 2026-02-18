@@ -24,7 +24,7 @@ export default async function LocationPage(props: { params: Promise<{ id: string
         {location.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img 
-            src={location.image.width(1200).url()} 
+            src={location.image} 
             className="w-full h-full object-cover opacity-80" 
             alt={location.name}
           />

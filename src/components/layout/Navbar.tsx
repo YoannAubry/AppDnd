@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/bestiary", label: "🐉 Bestiaire" },
   { href: "/tracker", label: "⚔️ Combat" },
   { href: "/players", label: "🛡️ Groupe" },
+  { href: "/maps", label: "🗺️ Cartes" },
 ]
 
 export function Navbar() {

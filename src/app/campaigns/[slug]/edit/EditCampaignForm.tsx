@@ -5,7 +5,7 @@ import Link from "next/link"
 
 export default function EditCampaignForm({ campaign, allLocations }: any) {
   return (
-    <form action={(formData) => updateCampaignAction(campaign._id, formData)} className="space-y-8">
+    <form action={(formData) => updateCampaignAction(campaign.id, formData)} className="space-y-8">
       
       {/* Grille responsive */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

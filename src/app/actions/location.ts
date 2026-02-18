@@ -5,10 +5,9 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { getString, parseJsonList } from "@/lib/actions-utils"
 
-// Helper pour parser les listes d'IDs
 function parseIds(json: string) {
-  const ids = parseJsonList(json) as string[] // ["id1", "id2"]
-  return ids.map(id => ({ id })) // [{id: "id1"}, {id: "id2"}]
+  const ids = parseJsonList(json) as string[]
+  return ids.map(id => ({ id }))
 }
 
 // --- CRÉATION ---
@@ -16,9 +15,9 @@ export async function createLocationAction(formData: FormData) {
   const name = getString(formData, "name")
   const description = getString(formData, "description")
   
-  // Note: On stocke la description en string simple maintenant pour SQLite (plus de PortableText complexe ici pour simplifier)
-  // Ou on l'enrobe en JSON si on veut garder la structure block, mais restons simple : string brute.
-  
+  // AJOUT ICI 👇
+  const image = getString(formData, "image")
+
   const npcIds = parseIds(getString(formData, "npcs"))
   const monsterIds = parseIds(getString(formData, "monsters"))
 
@@ -26,7 +25,9 @@ export async function createLocationAction(formData: FormData) {
     await prisma.location.create({
       data: {
         name,
-        description: JSON.stringify([{ children: [{ text: description }] }]), // Hack compatible PortableText basique
+        // On sauvegarde l'URL de l'image si elle existe
+        image: image || null,
+        description: JSON.stringify([{ children: [{ text: description }] }]), 
         npcs: { connect: npcIds },
         monsters: { connect: monsterIds }
       }
@@ -44,19 +45,26 @@ export async function createLocationAction(formData: FormData) {
 export async function updateLocationAction(id: string, formData: FormData) {
   const name = getString(formData, "name")
   const description = getString(formData, "description")
+  
+  // AJOUT ICI 👇
+  const image = getString(formData, "image")
 
   const npcIds = parseIds(getString(formData, "npcs"))
   const monsterIds = parseIds(getString(formData, "monsters"))
 
   try {
-    // Pour update des relations Many-to-Many en Prisma, on fait souvent 'set' pour remplacer la liste
     await prisma.location.update({
       where: { id },
       data: {
         name,
+        // On met à jour l'image SEULEMENT si une nouvelle URL est envoyée
+        // (Si le champ est vide mais qu'on veut garder l'ancienne, il faut gérer ça dans le form ou ici)
+        // Ici, on suppose que le form renvoie l'URL existante si pas changée.
+        image: image || undefined, 
+        
         description: JSON.stringify([{ children: [{ text: description }] }]),
-        npcs: { set: npcIds },      // Remplace toute la liste
-        monsters: { set: monsterIds } // Remplace toute la liste
+        npcs: { set: npcIds },
+        monsters: { set: monsterIds }
       }
     })
   } catch (error) {
@@ -69,9 +77,13 @@ export async function updateLocationAction(id: string, formData: FormData) {
   redirect(`/locations/${id}`)
 }
 
-// --- DELETE ---
 export async function deleteLocationAction(id: string) {
-  await prisma.location.delete({ where: { id } })
+  try {
+    await prisma.location.delete({ where: { id } })
+  } catch (err) {
+    console.error("Erreur suppression:", err)
+    throw new Error("Erreur suppression")
+  }
   revalidatePath("/locations")
   redirect("/locations")
 }

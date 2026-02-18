@@ -160,7 +160,7 @@ export default function TrackerPage() {
             <button onClick={handleSort} className="bg-[var(--bg-input)] hover:bg-[var(--bg-main)] border border-[var(--border-main)] px-3 py-2 rounded text-sm transition flex-1 sm:flex-none text-center">
               ⚡ Trier
             </button>
-            <button onClick={() => { if(confirm('Tout vider ?')) setCombatants([]) }} className="bg-red-900/20 hover:bg-red-900/40 border border-red-900/30 px-3 py-2 rounded text-sm text-red-400 transition">
+            <button onClick={() => { if(confirm('Tout vider ?')) setCombatants([]) ; setRound(1) ; setTurnIndex(0) }} className="bg-red-900/20 hover:bg-red-900/40 border border-red-900/30 px-3 py-2 rounded text-sm text-red-400 transition">
               🗑️
             </button>
           </div>

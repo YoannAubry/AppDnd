@@ -1,12 +1,12 @@
 import EditCampaignForm from "./EditCampaignForm"
-import { getCampaign, getLocation} from "@/app/actions/getters"
+import { getCampaign, getLocations} from "@/app/actions/getters"
 
 export default async function EditCampaignPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
   
   const [campaign, allLocations] = await Promise.all([
     getCampaign(params.slug),
-    getLocation(`*[_type == "location"] | order(name asc) { _id, name }`)
+    getLocations()
   ])
 
   if (!campaign) return <div className="p-20 text-center text-[var(--text-muted)]">Campagne introuvable</div>

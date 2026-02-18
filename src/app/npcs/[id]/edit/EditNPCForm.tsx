@@ -39,7 +39,11 @@ export default function EditNPCForm({ npc, monstersList }: { npc: any, monstersL
              <label className="text-xs text-[var(--text-muted)] block mb-1">Modèle</label>
              <select name="monsterTemplate" defaultValue={npc.monsterTemplate?._ref} className="w-full theme-input">
                <option value="">-- Choisir --</option>
-               {monstersList.map((m: any) => <option key={m._id} value={m._id}>{m.name}</option>)}
+               {(monstersList || []).map((m: any) => (
+                  <option key={m.id} value={m.id}> {/* Utilise m.id ! */}
+                    {m.name}
+                  </option>
+                ))}
              </select>
            </div>
         )}

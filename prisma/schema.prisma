@@ -83,6 +83,7 @@ model Location {
   // Relations (Many-to-Many implicite géré par Prisma)
   npcs        NPC[]     @relation("LocationNPCs")
   monsters    Monster[] @relation("LocationMonsters")
+  battlemaps  Battlemap[] 
   
   acts        Act[]     @relation("ActLocations")
 }
@@ -128,4 +129,17 @@ model Player {
   hpMax       Int     @default(10)
   ac          Int     @default(10)
   initBonus   Int     @default(0)
+}
+
+// ---------------------------------------------------------
+// 6. BATTLEMAPS
+// ---------------------------------------------------------
+model Battlemap {
+  id         String   @id @default(uuid())
+  name       String
+  image      String   // URL obligatoire
+  
+  // Relation optionnelle vers un Lieu
+  locationId String?
+  location   Location? @relation(fields: [locationId], references: [id])
 }

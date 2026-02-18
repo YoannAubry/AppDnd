@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { AppImage } from '../ui/AppImage';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 // On change le type importé pour éviter les conflits si tu as gardé l'ancien
@@ -36,16 +37,7 @@ export function MonsterCard({ monster }: { monster: any }) {
         
         {/* Image / Placeholder */}
         <div className="relative h-40 bg-[var(--bg-input)] overflow-hidden border-b border-[var(--border-main)] flex items-center justify-center shrink-0">
-          {imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img 
-              src={imageUrl} 
-              alt={monster.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-            />
-          ) : (
-            <span className="text-5xl opacity-50 group-hover:scale-110 transition">👾</span>
-          )}
+          <AppImage src={monster.image} alt={monster.name} type="monster" />
           
           {monster.stats?.challenge && (
             <div className="absolute top-2 right-2">

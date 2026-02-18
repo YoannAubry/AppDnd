@@ -1,11 +1,11 @@
-import { client } from "../../../lib/sanity"
+import { getNPCs, getMonsters } from "@/app/actions/getters"
 import NewLocationForm from "./NewLocationForm"
 
 // Composant serveur pour charger les listes PNJ/Monstres
 export default async function NewLocationPage() {
   const [allNpcs, allMonsters] = await Promise.all([
-    client.fetch(`*[_type == "npc"] | order(name asc) { _id, name }`),
-    client.fetch(`*[_type == "monster"] | order(name asc) { _id, name }`)
+    getNPCs(),
+    getMonsters()
   ])
 
   return (

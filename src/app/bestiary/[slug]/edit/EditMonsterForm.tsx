@@ -11,7 +11,7 @@ export default function EditMonsterForm({ monster }: { monster: any }) {
   const handleSubmit = async (formData: FormData) => {
     formData.set("traits", JSON.stringify(traits))
     formData.set("actions", JSON.stringify(actions))
-    await updateMonsterAction(monster._id, formData)
+    await updateMonsterAction(monster.id, formData)
   }
 
   const attrs = monster.stats?.attributes || { str:10, dex:10, con:10, int:10, wis:10, cha:10 }

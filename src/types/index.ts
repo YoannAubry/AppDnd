@@ -1,99 +1,93 @@
-// --- TYPES DE BASE ---
-export interface SanityDocument {
-  _id: string;
-  _type: string;
-  _createdAt?: string;
-  _updatedAt?: string;
-}
+// src/types/index.ts
 
-export interface Slug {
-  current: string;
-}
+// --- TYPES PRISMA (Miroir de ton schema.prisma) ---
 
-export interface ImageAsset {
-  _type: 'image';
-  asset: {
-    _ref: string;
-    _type: 'reference';
-  };
-}
-
-// --- ENTITÉS ---
-
-export interface Monster extends SanityDocument {
-  _type: 'monster';
-  name: string;
-  slug: Slug;
-  image?: ImageAsset;
-  type: string; // ex: "Dragon"
-  stats: StatBlock;
-}
-
-export interface NPC extends SanityDocument {
-  _type: 'npc';
-  name: string;
-  role?: string;
-  image?: ImageAsset;
-  personality?: string;
-  history?: string;
-  faction?: Faction;
+export interface Monster {
+  id: string
+  slug: string
+  name: string
+  type: string
+  image?: string | null
   
-  // Gestion Combat
-  combatType: 'none' | 'template' | 'custom';
-  monsterTemplate?: Monster;
-  customStats?: StatBlock;
+  ac: number
+  hp: string
+  speed: string
+  challenge?: string | null
   
-  inventory?: InventoryItem[];
-  spells?: string[]; // Liste de noms
+  senses?: string | null
+  languages?: string | null
+  alignment?: string | null
+
+  // Dans le code, on manipule ces champs parsés, pas les string JSON
+  attributes: Attributes
+  traits: Ability[]
+  actions: Ability[]
 }
 
-export interface Player extends SanityDocument {
-  _type: 'player';
-  name: string;
-  playerName: string;
-  avatar?: ImageAsset;
-  race: string;
-  class: string;
-  level: number;
+export interface NPC {
+  id: string
+  name: string
+  role?: string | null
+  image?: string | null
+  personality?: string | null
+  history?: string | null
+
+  inventory: InventoryItem[]
+  spells: string[] // Liste simple de noms
   
-  // Stats vitales
-  hpMax: number;
-  ac: number;
-  initBonus: number;
+  combatType: string // "none" | "template" | "custom"
+  customStats?: StatBlock | null
+  monsterTemplate?: Monster | null
+  monsterId?: string | null
 }
 
-export interface Location extends SanityDocument {
-  _type: 'location';
-  name: string;
-  image?: ImageAsset;
-  description?: any[]; // Portable Text
-  npcs?: NPC[];
-  monsters?: Monster[];
+export interface Player {
+  id: string
+  name: string
+  playerName?: string | null
+  avatar?: string | null
+  race?: string | null
+  class?: string | null
+  level: number
+  
+  hpMax: number
+  ac: number
+  initBonus: number
 }
 
-export interface Campaign extends SanityDocument {
-  _type: 'campaign';
-  title: string;
-  slug: Slug;
-  level: string;
-  image?: ImageAsset;
-  synopsis: string;
-  acts?: Act[];
+export interface Location {
+  id: string
+  name: string
+  image?: string | null
+  description?: string | null // Texte brut ou JSON PortableText stringifié
+  
+  npcs?: NPC[]
+  monsters?: Monster[]
+  
+  // Champs calculés (pour les listes)
+  npcCount?: number
+  monsterCount?: number
 }
 
-// --- SOUS-TYPES ---
-
-export interface StatBlock {
-  ac: number;
-  hp: string;
-  speed: string;
-  challenge?: string;
-  senses?: string;
-  languages?: string;
-  attributes: Attributes;
-  traits?: Ability[];
-  actions?: Ability[];
+export interface Campaign {
+  id: string
+  slug: string
+  title: string
+  level?: string | null
+  image?: string | null
+  synopsis?: string | null
+  acts: Act[]
 }
+
+export interface Act {
+  id: string
+  _key?: string // Pour dnd-kit si besoin
+  title: string
+  summary?: string | null
+  locations: Location[]
+}
+
+// --- TYPES UI / UTILITAIRES ---
 
 export interface Attributes {
   str: number; dex: number; con: number;
@@ -105,20 +99,29 @@ export interface Ability {
   desc: string;
 }
 
-export interface Faction {
-  name: string;
-  description?: string;
-  image?: ImageAsset;
-}
-
-export interface Act {
-  _key: string;
-  title: string;
-  summary: string;
-  locations?: Location[];
+export interface StatBlock {
+  hp: string | number; // Accepte les deux pour la flexibilité
+  ac: number;
+  speed?: string;
+  attributes?: Attributes;
 }
 
 export interface InventoryItem {
   name: string;
-  desc: string;
+  desc?: string;
+}
+
+// Pour le Tracker
+export interface Combatant {
+  id: string        // ID unique du combat (uuid aléatoire)
+  sourceId?: string // ID Prisma (monstre/pnj/joueur d'origine)
+  name: string
+  type: 'player' | 'monster' | 'npc'
+  faction: 'friendly' | 'hostile' | 'neutral'
+  initiative: number
+  hp: number
+  hpMax: number
+  ac: number
+  conditions: string[]
+  image?: string | null
 }

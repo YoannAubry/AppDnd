@@ -2,6 +2,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { PortableText } from "@portabletext/react"
+import { AppImage } from '../ui/AppImage';
+
 
 export function ActView({ act, index }: { act: any, index: number }) {
   const [isOpen, setIsOpen] = useState(index === 0)
@@ -61,9 +63,9 @@ export function ActView({ act, index }: { act: any, index: number }) {
                     <div className="flex flex-col gap-2">
                       {loc.npcs.map((npc: any, k: number) => (
                         <Link href={`/npcs/${npc._id}`} key={k} className="flex items-center gap-2 group cursor-pointer hover:bg-[var(--bg-card)] p-1 rounded transition">
-                           <div className="w-8 h-8 rounded-full bg-[var(--bg-card)] overflow-hidden border border-[var(--border-main)] shrink-0">
-                            {npc.image ? <img src={npc.image} className="w-full h-full object-cover"/> : <span className="flex items-center justify-center h-full text-xs">👤</span>}
-                          </div>
+                           <div className="w-8 h-8 rounded-full overflow-hidden border border-[var(--border-main)] shrink-0">
+                              <AppImage src={npc.image} alt={npc.name} type="npc" />
+                            </div>
                           <div>
                             <span className="font-bold text-[var(--text-main)] block leading-tight text-sm group-hover:text-[var(--accent-primary)] transition">{npc.name}</span>
                             <span className="text-xs text-[var(--text-muted)]">{npc.role}</span>

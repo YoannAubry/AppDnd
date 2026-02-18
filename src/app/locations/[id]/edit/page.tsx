@@ -1,5 +1,6 @@
-import { getMonster, getLocation, getNPC } from "@/app/actions/getters"
 import EditLocationForm from "./EditLocationForm"
+import { getLocation, getNPCs, getMonsters } from "@/app/actions/getters" // <-- Imports Prisma
+
 
 export default async function EditLocationPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -7,8 +8,8 @@ export default async function EditLocationPage(props: { params: Promise<{ id: st
   // Parallélisation des requêtes
   const [location, allNpcs, allMonsters] = await Promise.all([
     getLocation(params.id),
-    getNPC(`*[_type == "npc"] | order(name asc) { _id, name }`),
-    getMonster(`*[_type == "monster"] | order(name asc) { _id, name }`)
+    getNPCs(),
+    getMonsters()
   ])
 
   if (!location) return <div>Introuvable</div>

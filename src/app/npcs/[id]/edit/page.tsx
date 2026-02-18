@@ -1,5 +1,5 @@
 import EditNPCForm from "./EditNPCForm"
-import { getNPC, getMonster } from "@/app/actions/getters"
+import { getNPC, getMonsters } from "@/app/actions/getters"
 
 export default async function EditNPCPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -8,7 +8,7 @@ export default async function EditNPCPage(props: { params: Promise<{ id: string 
   const npcPromise = getNPC(params.id )
   
   // 2. Récupérer la liste des monstres (juste ID et Nom) pour le menu déroulant
-  const monstersPromise = getMonster(`*[_type == "monster"] | order(name asc) {_id, name}`)
+  const monstersPromise = getMonsters()
 
   // On attend les deux
   const [npc, monsters] = await Promise.all([npcPromise, monstersPromise])

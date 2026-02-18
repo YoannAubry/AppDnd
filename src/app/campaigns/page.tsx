@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { getCampaigns } from "@/app/actions/getters"
 import { Badge } from "../../components/ui/Badge"
+import { AppImage } from "../../components/ui/AppImage"
 
 
 
@@ -45,16 +46,8 @@ export default function CampaignsPage() {
                   
                   {/* IMAGE */}
                   <div className="h-56 bg-[var(--bg-input)] relative overflow-hidden shrink-0 flex items-center justify-center">
-                    {camp.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img 
-                        src={camp.image} 
-                        alt={camp.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-700 opacity-90 group-hover:opacity-100"
-                      />
-                    ) : (
-                      <div className="text-6xl opacity-50">📚</div>
-                    )}
+                    <AppImage src={camp.image} alt={camp.title} type="campaign" />
+
                     <div className="absolute bottom-4 left-4">
                       <Badge className="bg-[var(--accent-primary)] text-[var(--accent-text)] border-none shadow-lg">Niveau {camp.level}</Badge>
                     </div>

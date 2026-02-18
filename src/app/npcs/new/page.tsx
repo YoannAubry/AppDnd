@@ -1,10 +1,10 @@
-import { client } from "@/lib/sanity"
+import { getMonsters } from "@/app/actions/getters"
 import NewNPCForm from "./NewNPCForm"
 import Link from "next/link"
 
 export default async function NewNPCPage() {
   // On charge la liste des monstres pour le select
-  const monsters = await client.fetch(`*[_type == "monster"] | order(name asc) { _id, name }`)
+  const monsters = await getMonsters()
 
   return (
     <div className="min-h-screen bg-background text-[var(--text-main)] p-8 flex justify-center pb-20">
