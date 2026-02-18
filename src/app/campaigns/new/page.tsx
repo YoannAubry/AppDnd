@@ -1,9 +1,10 @@
-import { client } from "@/lib/sanity"
 import NewCampaignForm from "./NewCampaignForm"
 import Link from "next/link"
+import { getCampaign } from "@/app/actions/getters"
+
 
 export default async function NewCampaignPage() {
-  const allLocations = await client.fetch(`*[_type == "location"] | order(name asc) { _id, name }`)
+  const allLocations = await getCampaign(`*[_type == "location"] | order(name asc) { _id, name }`)
 
   return (
     // Fond global
