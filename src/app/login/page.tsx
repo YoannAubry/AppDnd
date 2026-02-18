@@ -1,4 +1,4 @@
-"use client"
+/*" use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -45,4 +45,16 @@ export default function LoginPage() {
       </form>
     </div>
   )
+} */
+
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+export function middleware(request: NextRequest) {
+  // On laisse tout passer sans vérifier le cookie
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 }
