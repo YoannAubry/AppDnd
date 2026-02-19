@@ -52,11 +52,11 @@ function SortableActItem({ act, index, allLocations, onUpdate, onRemove }: any) 
         <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
           {allLocations.map((loc:any) => (
             <button
-              key={loc._id}
+              key={loc.id}
               type="button"
-              onClick={() => toggleLocation(loc._id)}
+              onClick={() => toggleLocation(loc.id)}
               className={`text-xs px-2 py-1 rounded border transition select-none ${
-                act.locationIds?.includes(loc._id) 
+                act.locationIds?.includes(loc.id) 
                   ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] text-[var(--accent-text)] font-bold' 
                   : 'bg-[var(--bg-card)] border-[var(--border-main)] text-[var(--text-muted)] hover:border-[var(--text-main)]'
               }`}

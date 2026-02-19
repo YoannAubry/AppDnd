@@ -50,7 +50,14 @@ function parseActsLocal(json: string) {
 
 // --- UPDATE ---
 export async function updateCampaignAction(id: string, formData: FormData) {
-  const actsData = parseActsLocal(formData.get("acts") as string)
+  const actsRaw = formData.get("acts") as string
+  let actsData = []
+  try {
+    actsData = JSON.parse(actsRaw)
+    if (!Array.isArray(actsData)) actsData = []
+  } catch (e) {
+    console.error("Erreur JSON Acts", e)
+  }
 
   try {
     // Stratégie brutale mais efficace pour les nested relations en update :
@@ -67,7 +74,7 @@ export async function updateCampaignAction(id: string, formData: FormData) {
           level: getString(formData, "level"),
           synopsis: getString(formData, "synopsis"),
           acts: {
-            create: actsData.map((act, i) => ({
+            create: actsData.map((act: any, i: any) => ({
               title: act.title,
               summary: act.summary,
               order: i,
