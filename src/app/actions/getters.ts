@@ -21,7 +21,7 @@ export async function getMonster(slug: string) {
 function formatMonster(m: any) {
   return {
     ...m,
-    slug: { current: m.slug }, // Hack de compatibilité
+    slug: m.slug, // Hack de compatibilité
     stats: {
       hp: m.hp,
       ac: m.ac,
@@ -146,7 +146,7 @@ export async function getCampaign(slug: string) {
   return {
     ...c,
     _id: c.id,
-    slug: { current: c.slug },
+    slug: c.slug,
     acts: c.acts.map((act: any) => ({
       ...act,
       _key: act.id,

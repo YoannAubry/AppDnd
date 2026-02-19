@@ -99,7 +99,7 @@ export default async function NPCDetailPage(props: { params: Promise<{ id: strin
               {/* Lien Combat */}
               {npc.monsterTemplate && (
                 <div className="mt-8 pt-4 border-t border-[var(--border-main)]">
-                  <Link href={`/bestiary/${npc.monsterTemplate.slug.current}`} className="bg-[var(--bg-input)] border border-[var(--border-accent)] px-4 py-3 rounded-lg flex justify-between items-center hover:bg-[var(--accent-primary)] hover:text-[var(--accent-text)] transition group shadow-sm">
+                  <Link href={`/bestiary/${npc.monsterTemplate.slug}`} className="bg-[var(--bg-input)] border border-[var(--border-accent)] px-4 py-3 rounded-lg flex justify-between items-center hover:bg-[var(--accent-primary)] hover:text-[var(--accent-text)] transition group shadow-sm">
                     <div>
                       <span className="text-[10px] font-bold uppercase block mb-1 opacity-70">Fiche Technique</span>
                       <span className="font-bold font-serif text-lg group-hover:underline">{npc.monsterTemplate.name}</span>

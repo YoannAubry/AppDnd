@@ -3,10 +3,12 @@ import { updateMonsterAction } from "@/app/actions/bestiary"
 import { DynamicList } from "@/components/ui/DynamicList"
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation" 
 
 export default function EditMonsterForm({ monster }: { monster: any }) {
   const [traits, setTraits] = useState(monster.stats?.traits || [])
   const [actions, setActions] = useState(monster.stats?.actions || [])
+  const router = useRouter()
   
   const handleSubmit = async (formData: FormData) => {
     formData.set("traits", JSON.stringify(traits))
@@ -18,7 +20,7 @@ export default function EditMonsterForm({ monster }: { monster: any }) {
 
   return (
     <form action={handleSubmit} className="space-y-6 md:space-y-8">
-      <input type="hidden" name="slug" value={monster.slug.current} />
+      <input type="hidden" name="slug" value={monster.slug} />
 
       {/* IDENTITÉ */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -78,9 +80,13 @@ export default function EditMonsterForm({ monster }: { monster: any }) {
       </div>
 
       <div className="pt-8 flex flex-col-reverse md:flex-row justify-end gap-4 border-t border-[var(--border-main)] mt-8">
-        <Link href={`/bestiary/${monster.slug.current}`} className="px-6 py-3 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-input)] transition text-center">
+        <button 
+          type="button" // Important pour ne pas submit le form
+          onClick={() => router.replace(`/bestiary/${monster.slug}`)}
+          className="px-6 py-3 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-input)] transition text-center"
+        >
           Annuler
-        </Link>
+        </button>
         <button type="submit" className="theme-btn-primary w-full md:w-auto">
           Sauvegarder
         </button>

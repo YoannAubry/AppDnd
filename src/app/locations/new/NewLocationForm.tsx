@@ -2,33 +2,9 @@
 import { createLocationAction } from "@/app/actions/location"
 import { useState } from "react"
 import Link from "next/link"
+import { MultiSelect } from "@/components/ui/MultiSelect"
 
-function MultiSelect({ label, items, selectedIds, onChange }: any) {
-  return (
-    <div className="space-y-2">
-      <label className="block text-sm font-bold text-[var(--text-muted)] uppercase tracking-wide">{label}</label>
-      <div className="h-48 overflow-y-auto bg-[var(--bg-input)] border border-[var(--border-main)] rounded p-2 space-y-1">
-        {items.map((item: any) => (
-          <label key={item._id} className="flex items-center gap-2 p-2 hover:bg-[var(--bg-card)] rounded cursor-pointer text-sm">
-            <input 
-              type="checkbox" 
-              checked={selectedIds.includes(item._id)}
-              onChange={(e) => {
-                if (e.target.checked) onChange([...selectedIds, item._id])
-                else onChange(selectedIds.filter((id: string) => id !== item._id))
-              }}
-              className="accent-[var(--accent-primary)] w-4 h-4"
-            />
-            <span className={selectedIds.includes(item._id) ? "font-bold text-[var(--text-main)]" : "text-[var(--text-muted)]"}>
-              {item.name}
-            </span>
-          </label>
-        ))}
-      </div>
-      <p className="text-xs text-[var(--text-muted)] text-right">{selectedIds.length} sélectionné(s)</p>
-    </div>
-  )
-}
+
 
 export default function NewLocationForm({ allNpcs, allMonsters }: any) {
   const [selectedNpcs, setSelectedNpcs] = useState<string[]>([])

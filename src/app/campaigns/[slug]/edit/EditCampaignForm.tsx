@@ -29,7 +29,7 @@ export default function EditCampaignForm({ campaign, allLocations }: any) {
       </div>
 
       <div className="pt-6 flex justify-end gap-4 border-t border-[var(--border-main)] mt-8">
-        <Link href={`/campaigns/${campaign.slug.current}`} className="px-4 py-2 text-[var(--text-muted)] hover:text-[var(--text-main)] transition">
+        <Link href={`/campaigns/${campaign.slug}`} className="px-4 py-2 text-[var(--text-muted)] hover:text-[var(--text-main)] transition">
           Annuler
         </Link>
         <button type="submit" className="theme-btn-primary">
