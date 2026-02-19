@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { AppImage } from "@/components/ui/AppImage"
+import { deleteBattlemapAction } from "@/app/actions/battlemap"
+
 
 export default async function MapsPage() {
   const maps = await prisma.battlemap.findMany({
@@ -51,6 +54,23 @@ export default async function MapsPage() {
                 
                 {/* Actions Rapides (Delete / Edit) */}
                 {/* (À ajouter plus tard si besoin) */}
+
+
+                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                  <Link href={`/maps/${map.id}/edit`} className="text-[var(--text-muted)] hover:text-[var(--accent-primary)]">
+                    ✏️
+                  </Link>
+                  
+                  {/* Pour le delete, le plus simple est un petit composant client ou un formulaire inline */}
+                  <form action={async () => {
+                    "use server"
+                    await deleteBattlemapAction(map.id)
+                  }}>
+                    <button type="submit" className="text-[var(--text-muted)] hover:text-red-500">
+                      🗑️
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
           ))}

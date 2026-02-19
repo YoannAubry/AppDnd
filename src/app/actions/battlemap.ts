@@ -40,3 +40,27 @@ export async function deleteBattlemapAction(id: string) {
   revalidatePath("/maps")
   redirect("/maps")
 }
+
+// --- UPDATE ---
+export async function updateBattlemapAction(id: string, formData: FormData) {
+  const name = getString(formData, "name")
+  const image = getString(formData, "image")
+  const locationId = getString(formData, "locationId") || null
+
+  try {
+    await prisma.battlemap.update({
+      where: { id },
+      data: {
+        name,
+        image,
+        locationId
+      }
+    })
+  } catch (error) {
+    console.error("Erreur update battlemap:", error)
+    throw new Error("Impossible de modifier la carte")
+  }
+
+  revalidatePath("/maps")
+  redirect("/maps")
+}
