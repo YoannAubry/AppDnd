@@ -9,6 +9,7 @@ import { generateSlug, getString, parseJsonList } from "@/lib/actions-utils"
 export async function createCampaignAction(formData: FormData) {
   const title = getString(formData, "title")
   const actsData = parseJsonList(formData.get("acts")) as any[]
+  console.log("DEBUG ACTS:", JSON.stringify(actsData, null, 2)) 
 
   try {
     await prisma.campaign.create({
@@ -38,9 +39,18 @@ export async function createCampaignAction(formData: FormData) {
   redirect("/campaigns")
 }
 
+function parseActsLocal(json: string) {
+  try {
+    const list = JSON.parse(json)
+    if (!Array.isArray(list)) return []
+    // On garde tout ce qui a un titre
+    return list.filter((a: any) => a.title && a.title.trim() !== "")
+  } catch (e) { return [] }
+}
+
 // --- UPDATE ---
 export async function updateCampaignAction(id: string, formData: FormData) {
-  const actsData = parseJsonList(formData.get("acts")) as any[]
+  const actsData = parseActsLocal(formData.get("acts") as string)
 
   try {
     // Stratégie brutale mais efficace pour les nested relations en update :

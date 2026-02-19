@@ -22,9 +22,12 @@ export function parseJsonList<T>(jsonString: FormDataEntryValue | null): T[] {
   try {
     const list = JSON.parse(jsonString);
     if (!Array.isArray(list)) return [];
-    // Filtre basique : on garde si c'est un objet avec un nom, ou une string
+    
+    // Filtre corrigé : accepte name OU title
     return list.filter((item: any) => 
-      typeof item === 'string' || (item.name && item.name.trim() !== "")
+      typeof item === 'string' || 
+      (item.name && item.name.trim() !== "") || 
+      (item.title && item.title.trim() !== "") // <-- AJOUT CRUCIAL
     );
   } catch (e) {
     console.warn("Erreur parsing JSON:", e);
